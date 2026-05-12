@@ -444,20 +444,22 @@ Implement `export_dashboard_data.py` per spec §8: aggregate all attempts + `lab
 - `05-learning-data/lab-status.json` — minimal seed file with the lab catalog's first ~5 lab ids in `not_started`.
 
 ### 7.3 Tests to write first (`tests/test_export_dashboard_data.py`)
-Fixtures:
-- `tests/fixtures/attempts_dir/{attempt_a.json, attempt_b.json, attempt_c.json}` — three attempts with ascending `finished_at` and varying scores.
-- `tests/fixtures/lab-status/normal.json`, `…/empty.json`.
+Fixtures: built inline in tests via helper functions (no committed JSON fixture files; `_write_attempts(tmp_path, …)` writes attempt JSONs into `tmp_path` per test).
 
-Tests:
-- `test_output_has_all_required_top_level_keys` — every key from spec §8.1 present (including empty arrays where applicable).
-- `test_latest_attempt_is_most_recent` — chooses the attempt with the latest `finished_at`.
+Tests (actual file names; renames from earlier draft are noted in parentheses):
+- `test_output_contains_all_required_top_level_keys` *(was `test_output_has_all_required_top_level_keys`)* — every key from spec §8.1 present.
+- `test_latest_attempt_is_most_recent_finished_at` *(was `test_latest_attempt_is_most_recent`)*.
 - `test_domain_breakdown_always_lists_d1_through_d5` — even when zero questions in a domain, the entry exists with `accuracy: null`.
-- `test_weak_concepts_sorted_and_capped_to_10`.
-- `test_lab_recommendations_capped_to_5_and_prefer_weak_concepts`.
+- `test_weak_concepts_sorted_by_miss_rate_descending` + `test_weak_concepts_capped_at_ten` + `test_weak_concepts_excludes_zero_miss_rate` *(replaced the single planned `test_weak_concepts_sorted_and_capped_to_10`)*.
+- `test_lab_recommendations_prefer_weak_concepts_and_cap_at_five` *(was `test_lab_recommendations_capped_to_5_and_prefer_weak_concepts`)*.
 - `test_trend_is_chronological_ascending`.
 - `test_export_is_byte_identical_on_repeated_runs` — diff two runs against fresh tmp `--out`.
-- `test_export_uses_no_pdf_and_no_network` — monkeypatch `open` to forbid any path under `01-sources/`; monkeypatch `urllib.request.urlopen` to raise; export still succeeds.
+- `test_export_does_not_read_source_pdf` *(was `test_export_uses_no_pdf_and_no_network`; the network half of the original test now lives in `tests/test_export_coverage.py::test_export_does_not_open_network_sockets`)*.
 - `test_empty_attempts_dir_produces_valid_empty_output` — `latest_attempt: null`, breakdowns present but zeroed, `trend: []`.
+
+Additional regression suites delivered alongside the plan-named tests:
+- `tests/test_export_review_fixes.py` (9 tests): tie-break by `attempt_id`, atomic-write `*.tmp` cleanup, `ExportError` on malformed lab-status, `--now` ISO validation, stable recommendation order vs. JSON insertion order, non-JSON / sub-directory entries in attempts dir, byte-identity of the canonical CLI command with pinned `--now`.
+- `tests/test_export_coverage.py` (10 tests): `latest_attempt` tie determinism, missing `domain-map.md` fallback, lab matching multiple weak concepts (dedup), all-completed → no recommendations, weak concept without matching lab, no network sockets opened, drift-proof `total_labs`, byte-identity on `finished_at` ties, default-UTC ISO-8601 format.
 
 ### 7.4 Implementation steps
 1. Tests red.

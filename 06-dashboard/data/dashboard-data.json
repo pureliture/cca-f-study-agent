@@ -1,0 +1,164 @@
+{
+  "domain_breakdown": [
+    {
+      "accuracy": 1.0,
+      "correct": 2,
+      "domain": "D1",
+      "title": "Agentic Architecture & Orchestration",
+      "total": 2,
+      "weight": 0.27
+    },
+    {
+      "accuracy": 0.5,
+      "correct": 1,
+      "domain": "D2",
+      "title": "Tool Design & MCP Integration",
+      "total": 2,
+      "weight": 0.18
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 2,
+      "domain": "D3",
+      "title": "Claude Code Configuration & Workflows",
+      "total": 2,
+      "weight": 0.2
+    },
+    {
+      "accuracy": 0.5,
+      "correct": 1,
+      "domain": "D4",
+      "title": "Prompt Engineering & Structured Output",
+      "total": 2,
+      "weight": 0.2
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 2,
+      "domain": "D5",
+      "title": "Context Management & Reliability",
+      "total": 2,
+      "weight": 0.15
+    }
+  ],
+  "generated_at": "2026-05-12T00:30:00Z",
+  "lab_progress": {
+    "completed": 1,
+    "in_progress": 1,
+    "not_started": 8,
+    "recommended_next": [
+      {
+        "lab_id": "lab-d2-mcp-basics",
+        "reason": "weak concept: mcp"
+      }
+    ],
+    "total_labs": 10
+  },
+  "latest_attempt": {
+    "accuracy": 0.8,
+    "attempt_id": "att-2026-05-11T10-00-00Z-self-mock-001",
+    "finished_at": "2026-05-11T10:00:00Z",
+    "pass": true,
+    "pass_gap": 100,
+    "pass_progress": 1.0,
+    "raw_correct": 8,
+    "scaled_score": 820,
+    "total": 10
+  },
+  "pass_mark": 720,
+  "scenario_breakdown": [
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "agentic-orchestration",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "claude-code-config",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "claude-code-hooks",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "context-budgeting",
+      "total": 1
+    },
+    {
+      "accuracy": 0.0,
+      "correct": 0,
+      "scenario": "mcp-integration",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "prompt-design",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "retry-and-idempotency",
+      "total": 1
+    },
+    {
+      "accuracy": 0.0,
+      "correct": 0,
+      "scenario": "structured-output",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "subagent-delegation",
+      "total": 1
+    },
+    {
+      "accuracy": 1.0,
+      "correct": 1,
+      "scenario": "tool-schema-design",
+      "total": 1
+    }
+  ],
+  "trend": [
+    {
+      "attempt_id": "att-2026-05-11T10-00-00Z-self-mock-001",
+      "finished_at": "2026-05-11T10:00:00Z",
+      "scaled_score": 820
+    }
+  ],
+  "weak_concepts": [
+    {
+      "concept_tag": "json-prefill",
+      "miss_rate": 1.0,
+      "missed": 1,
+      "seen": 1
+    },
+    {
+      "concept_tag": "mcp",
+      "miss_rate": 1.0,
+      "missed": 1,
+      "seen": 1
+    },
+    {
+      "concept_tag": "stop-sequences",
+      "miss_rate": 1.0,
+      "missed": 1,
+      "seen": 1
+    },
+    {
+      "concept_tag": "tool-discovery",
+      "miss_rate": 1.0,
+      "missed": 1,
+      "seen": 1
+    }
+  ]
+}

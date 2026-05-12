@@ -1,0 +1,74 @@
+{
+  "labs": [
+    {
+      "lab_id": "lab-d1-agent-loop",
+      "domain": "D1",
+      "concept_tags": ["agent-loop", "tool-use"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d1-subagent-context-isolation",
+      "domain": "D1",
+      "concept_tags": ["subagent", "context-isolation"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d2-tool-schema",
+      "domain": "D2",
+      "concept_tags": ["tool-schema", "tool-selection"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d2-mcp-basics",
+      "domain": "D2",
+      "concept_tags": ["mcp", "tool-discovery"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d3-claude-md",
+      "domain": "D3",
+      "concept_tags": ["claude-md", "project-rules"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d3-hooks",
+      "domain": "D3",
+      "concept_tags": ["hooks", "settings-json"],
+      "status": "in_progress",
+      "last_run": "2026-05-11T08:30:00Z"
+    },
+    {
+      "lab_id": "lab-d4-json-prefill",
+      "domain": "D4",
+      "concept_tags": ["json-prefill", "stop-sequences"],
+      "status": "completed",
+      "last_run": "2026-05-10T12:00:00Z"
+    },
+    {
+      "lab_id": "lab-d4-prompt-design",
+      "domain": "D4",
+      "concept_tags": ["system-prompt", "step-by-step"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d5-context-budget",
+      "domain": "D5",
+      "concept_tags": ["context-window", "summarization"],
+      "status": "not_started",
+      "last_run": null
+    },
+    {
+      "lab_id": "lab-d5-retry-idempotency",
+      "domain": "D5",
+      "concept_tags": ["idempotency", "retry"],
+      "status": "not_started",
+      "last_run": null
+    }
+  ]
+}
