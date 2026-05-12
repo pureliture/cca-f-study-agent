@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CCA-F Study Runtime Use Cases</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6673;
+      --line: #d7dde5;
+      --paper: #f7f8fa;
+      --panel: #ffffff;
+      --source: #e8f4ff;
+      --bank: #ecf7ed;
+      --attempt: #fff4de;
+      --score: #f1ecff;
+      --dash: #ffeef2;
+      --lab: #eef6f5;
+      --accent: #28666e;
+      --warn: #a65f00;
+      --ok: #2f6f3e;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 34px 0 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    p { margin: 0 0 12px; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.93em;
+      background: #eef1f5;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .lede {
+      max-width: 900px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin: 18px 0;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .source { background: var(--source); }
+    .bank { background: var(--bank); }
+    .attempt { background: var(--attempt); }
+    .score { background: var(--score); }
+    .dash { background: var(--dash); }
+    .lab { background: var(--lab); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(130px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .step {
+      position: relative;
+      min-height: 140px;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -9px;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #6b7380;
+      border-right: 2px solid #6b7380;
+      transform: translateY(-50%) rotate(45deg);
+      background: transparent;
+      z-index: 2;
+    }
+
+    .step .num {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .step p, .card p, .lane p, .case p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card, .case, .lane {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 14px;
+    }
+
+    .case {
+      border-left: 5px solid var(--accent);
+    }
+
+    .case strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .swimlane {
+      display: grid;
+      grid-template-columns: 160px repeat(5, 1fr);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .swimlane > div {
+      min-height: 72px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    .swimlane > div:nth-child(6n) { border-right: 0; }
+    .swimlane > div:nth-last-child(-n+6) { border-bottom: 0; }
+
+    .lane-head {
+      font-weight: 700;
+      color: var(--ink);
+      background: #f1f3f6;
+    }
+
+    .actor {
+      font-weight: 700;
+      background: #f8fafc;
+    }
+
+    .pill {
+      display: inline-block;
+      margin: 2px 3px 2px 0;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      font-size: 12px;
+    }
+
+    .artifact-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .arrow-down {
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 4px 0;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+    }
+
+    .phase {
+      min-height: 108px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: #fff;
+    }
+
+    .phase.done { border-color: #8cc99b; background: #f0faf2; }
+    .phase.next { border-color: #e1b76d; background: #fff8eb; }
+
+    .phase .tag {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: 8px;
+    }
+
+    .metric {
+      min-height: 96px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 10px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .note {
+      border-left: 4px solid var(--warn);
+      padding: 10px 12px;
+      background: #fff7e8;
+      color: #5a3b10;
+      border-radius: 4px;
+      margin-top: 12px;
+    }
+
+    .loop {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .loop-node {
+      position: relative;
+      min-height: 132px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+    }
+
+    .loop-node::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      right: -8px;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #6b7380;
+      border-right: 2px solid #6b7380;
+      transform: rotate(45deg);
+      background: transparent;
+      z-index: 2;
+    }
+
+    .loop-node:last-child::after {
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: -18px;
+      transform: translateX(-50%) rotate(135deg);
+    }
+
+    .cycle-return {
+      grid-column: 1 / -1;
+      border: 1px dashed var(--accent);
+      border-radius: var(--radius);
+      color: var(--accent);
+      padding: 10px 12px;
+      text-align: center;
+      background: #f3fbfb;
+      font-weight: 700;
+    }
+
+    .ops-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 960px) {
+      .flow, .grid-2, .grid-3, .artifact-map, .timeline, .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .loop, .ops-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .loop-node::after {
+        top: auto;
+        right: 50%;
+        bottom: -9px;
+        transform: translateX(50%) rotate(135deg);
+      }
+
+      .step:not(:last-child)::after {
+        top: auto;
+        right: 50%;
+        bottom: -9px;
+        transform: translateX(50%) rotate(135deg);
+      }
+
+      .swimlane {
+        grid-template-columns: 120px 1fr;
+      }
+
+      .swimlane > div {
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .swimlane > div:nth-child(6n) { border-right: 1px solid var(--line); }
+      .swimlane > div:nth-last-child(-n+6) { border-bottom: 1px solid var(--line); }
+      .lane-head:nth-child(n+3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>CCA-F Study Runtime 유스케이스 지도</h1>
+    <p class="lede">
+      요구사항 기준의 사용 시나리오는 “자료를 읽고 끝내는 학습”이 아니라,
+      <b>문제 생성/검수 → 모의고사 풀이 반복 → 점수/취약점 분석 → 대시보드 → 다음 학습 행동</b>으로 이어지는 로컬 학습 운영 루프다.
+      PDF와 NotebookLM은 근거/이론 계층이고, 실제 런타임 판단은 JSON/JSONL 파일에서만 일어난다.
+    </p>
+    <div class="legend" aria-label="Legend">
+      <span class="chip"><span class="dot source"></span>Source / metadata</span>
+      <span class="chip"><span class="dot bank"></span>Question bank</span>
+      <span class="chip"><span class="dot attempt"></span>Attempt</span>
+      <span class="chip"><span class="dot score"></span>Scoring / analysis</span>
+      <span class="chip"><span class="dot dash"></span>Dashboard</span>
+      <span class="chip"><span class="dot lab"></span>Study action / labs</span>
+    </div>
+  </header>
+
+  <section class="section">
+    <h2>1. 한 줄 요약: 사용자는 무엇을 반복하나</h2>
+    <div class="flow">
+      <div class="step source">
+        <div class="num">01</div>
+        <h3>이론 출처 고정</h3>
+        <p><code>guide_en.pdf</code>는 읽기 전용 근거로 등록한다. 런타임은 PDF를 파싱하지 않는다.</p>
+      </div>
+      <div class="step bank">
+        <div class="num">02</div>
+        <h3>문제 세트 생성/검수</h3>
+        <p>새 문제는 generated/draft로 만들고, 검증/리뷰 후 seed 또는 reviewed pool로 승격한다.</p>
+      </div>
+      <div class="step attempt">
+        <div class="num">03</div>
+        <h3>모의고사 풀이 제출</h3>
+        <p>사용자가 선택지만 담은 answers JSON을 만들고, 이를 normalized attempt로 변환한다.</p>
+      </div>
+      <div class="step score">
+        <div class="num">04</div>
+        <h3>점수 계산</h3>
+        <p>정답률에서 scaled score를 계산하고 720 기준 pass/fail/gap을 산출한다.</p>
+      </div>
+      <div class="step dash">
+        <div class="num">05</div>
+        <h3>대시보드 생성</h3>
+        <p>attempt들과 lab status를 모아 <code>dashboard-data.json</code> 하나로 만든다.</p>
+      </div>
+      <div class="step lab">
+        <div class="num">06</div>
+        <h3>다음 학습 결정</h3>
+        <p>취약 도메인/시나리오/개념 태그를 보고 다음 실습과 복습을 정한다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>2. 반복 모의고사 운영 루프</h2>
+    <p>
+      사용자는 모의고사를 한 번 제출하고 끝내지 않는다. 학습이 진행될수록 새로운 문제 세트를 만들고,
+      이미 푼 attempt는 누적 보존하며, 대시보드는 최신 점수와 장기 추세를 함께 보여줘야 한다.
+    </p>
+    <div class="loop">
+      <div class="loop-node bank">
+        <h3>문제 후보 생성</h3>
+        <p>PDF/NotebookLM/학습 노트를 근거로 새 문제 후보를 만든다. MVP에서는 자동 생성이 아니라 수동/외부 생성 결과를 repo에 들여오는 흐름이다.</p>
+        <span class="pill">generated</span>
+        <span class="pill">draft</span>
+      </div>
+      <div class="loop-node bank">
+        <h3>검증/리뷰</h3>
+        <p>schema, source id, scenario id, duplicate id, official 금지 규칙을 통과해야 출제 pool로 들어간다.</p>
+        <span class="pill">validate_questions</span>
+        <span class="pill">status != official</span>
+      </div>
+      <div class="loop-node attempt">
+        <h3>모의고사 세트 선택</h3>
+        <p>도메인 균형형, 취약 개념 집중형, 전체 랜덤형처럼 목적별 question set을 고른다.</p>
+        <span class="pill">D1-D5 mix</span>
+        <span class="pill">weak tags</span>
+      </div>
+      <div class="loop-node attempt">
+        <h3>반복 풀이 저장</h3>
+        <p>각 풀이 결과는 append-only attempt로 남긴다. 같은 문제라도 날짜/세트/라벨이 다른 시도는 별도 기록이다.</p>
+        <span class="pill">attempt-001</span>
+        <span class="pill">attempt-002</span>
+      </div>
+      <div class="loop-node dash">
+        <h3>누적 추세 갱신</h3>
+        <p>dashboard-data는 모든 attempts를 다시 집계해 최신 점수, 반복 오답, 추세, 다음 lab을 갱신한다.</p>
+        <span class="pill">trend</span>
+        <span class="pill">weak concepts</span>
+      </div>
+      <div class="cycle-return">분석 결과가 다음 문제 세트의 출제 비중과 복습 계획으로 되돌아간다.</div>
+    </div>
+
+    <div class="note">
+      중요한 경계: MVP는 PDF 자동 파싱/자동 문제 생성을 구현하지 않는다. 하지만 운영 모델은 반복 생성을 전제로 둔다.
+      즉, 새 문제는 <code>02-question-bank/generated/</code> 또는 별도 reviewed pool로 들어오고,
+      검증 전에는 절대 <code>official</code>로 취급하지 않는다.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>3. 핵심 사용자와 유스케이스</h2>
+    <div class="grid-3">
+      <div class="case">
+        <strong>학습자</strong>
+        <p>모의고사를 풀고, 현재 합격권인지 확인하고, 다음에 무엇을 공부할지 결정한다.</p>
+        <span class="pill">submit answers</span>
+        <span class="pill">view dashboard</span>
+        <span class="pill">update lab status</span>
+      </div>
+      <div class="case">
+        <strong>문제 작성자 / 큐레이터</strong>
+        <p>PDF와 domain/scenario map을 근거로 새 문제 후보를 만들고, 검증/리뷰를 거쳐 출제 pool을 늘린다.</p>
+        <span class="pill">generate drafts</span>
+        <span class="pill">validate JSONL</span>
+        <span class="pill">prevent unofficial official</span>
+        <span class="pill">keep source IDs clean</span>
+      </div>
+      <div class="case">
+        <strong>로컬 런타임</strong>
+        <p>외부 API, DB, 서버 없이 파일만 읽고 점수와 대시보드 데이터를 재현 가능하게 만든다.</p>
+        <span class="pill">no network</span>
+        <span class="pill">no PDF parsing</span>
+        <span class="pill">deterministic output</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>4. 실제 하루 사용 시나리오</h2>
+    <div class="swimlane">
+      <div class="lane-head">Actor / 단계</div>
+      <div class="lane-head">학습 전</div>
+      <div class="lane-head">풀이</div>
+      <div class="lane-head">제출/정규화</div>
+      <div class="lane-head">분석</div>
+      <div class="lane-head">다음 행동</div>
+
+      <div class="actor">학습자</div>
+      <div>NotebookLM/PDF로 이론 복습</div>
+      <div>오늘의 모의고사 세트 선택 후 답 선택</div>
+      <div><code>attempt_label</code>이 다른 answers JSON 작성</div>
+      <div>대시보드에서 최신 점수와 이전 attempt 대비 추세 확인</div>
+      <div>약점 기반 새 문제 세트/추천 lab 수행</div>
+
+      <div class="actor">파일</div>
+      <div class="source"><code>00-meta/*</code><br><code>01-sources/en/*</code></div>
+      <div class="bank"><code>02-question-bank/seed/*.jsonl</code><br><code>generated/*.jsonl</code></div>
+      <div class="attempt"><code>05-learning-data/attempts/att-*.json</code></div>
+      <div class="dash"><code>dashboard-data.json</code><br><code>trend[]</code></div>
+      <div class="lab"><code>lab-status.json</code><br><code>wrong-answer-log.md</code></div>
+
+      <div class="actor">명령</div>
+      <div><code>validate_questions</code></div>
+      <div>수동 풀이</div>
+      <div><code>submit_attempt.py</code></div>
+      <div><code>score_attempt.py</code><br><code>export_dashboard_data.py</code></div>
+      <div><code>http.server</code>로 dashboard 확인</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>5. 데이터가 이동하는 방식</h2>
+    <div class="artifact-map">
+      <div class="card source">
+        <h3>근거 계층</h3>
+        <p><code>source-register.md</code>, <code>domain-map.md</code>, <code>scenario-map.md</code>는 문제와 분석의 기준점이다.</p>
+      </div>
+      <div class="card bank">
+        <h3>문제 계층</h3>
+        <p><code>seed</code>, <code>generated</code>, <code>reviewed</code> 문제 pool이 있다. 출제 전에는 schema와 source/scenario 검증을 통과해야 한다.</p>
+      </div>
+      <div class="card attempt">
+        <h3>풀이 계층</h3>
+        <p>정규화된 attempt는 각 답에 domain/scenario/concept_tags를 포함한다. 이후 scoring은 문제은행을 다시 읽지 않는다.</p>
+      </div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="artifact-map">
+      <div class="card score">
+        <h3>분석 계층</h3>
+        <p>raw score, scaled score, pass gap, domain/scenario/concept breakdown을 계산한다.</p>
+      </div>
+      <div class="card dash">
+        <h3>표시 계층</h3>
+        <p><code>dashboard-data.json</code>이 정적 dashboard의 유일한 입력이다. HTML은 데이터를 직접 만들지 않는다.</p>
+      </div>
+      <div class="card lab">
+        <h3>학습 행동 계층</h3>
+        <p>weak concept와 <code>lab-status.json</code>를 결합해 다음 실습 후보를 고른다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>6. 문제 세트와 attempt가 쌓이는 구조</h2>
+    <div class="ops-grid">
+      <div class="card bank">
+        <h3>Seed bank</h3>
+        <p>초기 기준 문제. 최소 10개, D1-D5 커버리지 확보. 회귀 테스트와 샘플 모의고사의 안정 기준이다.</p>
+      </div>
+      <div class="card bank">
+        <h3>Generated bank</h3>
+        <p>새로 만든 후보 문제. 자동/수동 출처와 관계없이 <code>official</code> 금지, 중복/시나리오/source 검증 대상이다.</p>
+      </div>
+      <div class="card attempt">
+        <h3>Attempt history</h3>
+        <p><code>attempt_label</code>과 <code>finished_at</code>로 매번 별도 attempt를 만든다. 덮어쓰지 않고 누적한다.</p>
+      </div>
+      <div class="card dash">
+        <h3>Trend dashboard</h3>
+        <p>최신 attempt만 보지 않고 모든 attempts의 scaled score, weak concepts, domain drift를 시간순으로 보여준다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>7. 대시보드가 답해야 하는 7개 질문</h2>
+    <div class="metrics">
+      <div class="metric"><b>합격 중인가?</b><span>pass/fail vs 720</span></div>
+      <div class="metric"><b>얼마나 부족한가?</b><span>signed pass_gap</span></div>
+      <div class="metric"><b>가장 약한 도메인은?</b><span>D1-D5 accuracy</span></div>
+      <div class="metric"><b>가장 약한 시나리오는?</b><span>scenario breakdown</span></div>
+      <div class="metric"><b>반복 오답 개념은?</b><span>weak concept tags top 10</span></div>
+      <div class="metric"><b>다음 lab은?</b><span>weak concept + lab status</span></div>
+      <div class="metric"><b>점수는 오르는가?</b><span>chronological trend</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>8. 유스케이스별 성공/실패 경로</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>UC-1: 새 문제 후보 생성</h3>
+        <p><b>성공:</b> 새 문제는 source/domain/scenario/concept_tags/status를 가진 JSONL row로 저장된다.</p>
+        <p><b>실패:</b> 근거가 불명확하거나 자동 생성 결과를 official로 표시하면 출제 pool에 넣지 않는다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-2: 문제은행 검증</h3>
+        <p><b>성공:</b> 모든 문제가 schema, source, scenario, duplicate rule을 통과한다.</p>
+        <p><b>실패:</b> unknown source, unknown scenario, duplicate id, generated/official status가 발견되면 중단한다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-3: 반복 모의고사 제출</h3>
+        <p><b>성공:</b> 매 회차 answers JSON이 question bank와 join되어 새로운 attempt JSON으로 저장된다.</p>
+        <p><b>실패:</b> 알 수 없는 question_id는 실패하고, 누락 답안은 null/incorrect로 기록된다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-4: 점수 계산</h3>
+        <p><b>성공:</b> <code>round(100 + accuracy * 900)</code>로 scaled score를 만들고 720 기준 gap을 계산한다.</p>
+        <p><b>실패:</b> attempt schema가 깨졌거나 answers가 없으면 정의된 edge case로 처리한다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-5: dashboard export</h3>
+        <p><b>성공:</b> 모든 attempt와 lab status를 모아 deterministic JSON을 만든다.</p>
+        <p><b>실패:</b> 빈 attempts라도 top-level key는 유지하고 empty state를 만든다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-6: dashboard 확인</h3>
+        <p><b>성공:</b> 정적 HTML이 <code>../data/dashboard-data.json</code>만 fetch해서 7개 위젯을 렌더링한다.</p>
+        <p><b>실패:</b> 데이터가 비어도 JS error 없이 no data 상태를 보여준다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-7: 다음 문제 세트 조정</h3>
+        <p><b>성공:</b> weak concept와 domain breakdown을 보고 다음 모의고사 세트의 출제 비중을 조정한다.</p>
+        <p><b>실패:</b> 최근 1회 점수만 보고 전체 학습 방향을 바꾸지 않는다. trend와 반복 오답을 같이 본다.</p>
+      </div>
+      <div class="card">
+        <h3>UC-8: KR PDF 확장</h3>
+        <p><b>성공:</b> 기존 EN-CORE를 유지하고 KR-LECTURES source set을 추가한다.</p>
+        <p><b>실패:</b> NotebookLM upload package를 runtime source of truth로 착각하지 않는다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>9. 구현 Phase와 유저 가치의 연결</h2>
+    <div class="timeline">
+      <div class="phase done">
+        <div class="tag">Phase 1</div>
+        <h3>뼈대/메타</h3>
+        <p>출처와 도메인/시나리오 기준이 생긴다.</p>
+      </div>
+      <div class="phase done">
+        <div class="tag">Phase 2</div>
+        <h3>패키지</h3>
+        <p>CLI 모듈을 로컬에서 실행할 수 있다.</p>
+      </div>
+      <div class="phase done">
+        <div class="tag">Phase 3</div>
+        <h3>스키마</h3>
+        <p>문제/attempt 계약이 고정된다.</p>
+      </div>
+      <div class="phase done">
+        <div class="tag">Phase 4</div>
+        <h3>문제 검증</h3>
+        <p>seed bank 품질을 자동 확인한다.</p>
+      </div>
+      <div class="phase next">
+        <div class="tag">Phase 5</div>
+        <h3>제출 정규화</h3>
+        <p>사용자의 답안이 분석 가능한 attempt가 된다.</p>
+      </div>
+      <div class="phase">
+        <div class="tag">Phase 6</div>
+        <h3>채점</h3>
+        <p>합격 여부와 취약점이 계산된다.</p>
+      </div>
+      <div class="phase">
+        <div class="tag">Phase 7</div>
+        <h3>Export</h3>
+        <p>학습 상태가 dashboard-data로 집계된다.</p>
+      </div>
+      <div class="phase">
+        <div class="tag">Phase 8</div>
+        <h3>Dashboard</h3>
+        <p>다음 학습 행동을 한 화면에서 결정한다.</p>
+      </div>
+    </div>
+    <div class="note">
+      현재 사용자가 직접 체감하는 기능은 Phase 5부터 시작된다. Phase 1-4는 데이터 품질과 계약을 만드는 기반이고,
+      Phase 5-8이 “이번 attempt가 이전보다 나아졌는가, 다음 문제 세트는 무엇이어야 하는가”라는 반복 학습 경험을 완성한다.
+    </div>
+  </section>
+</main>
+</body>
+</html>
