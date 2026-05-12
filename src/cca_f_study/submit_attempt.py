@@ -17,8 +17,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -39,6 +41,21 @@ def _slug(value: str) -> str:
     """Lowercase, collapse non-alphanumerics into dashes, strip."""
     s = _NON_ALNUM.sub("-", value).strip("-").lower()
     return s or "attempt"
+
+
+def _store_path(p: Path) -> str:
+    """Return a POSIX-style path relative to cwd when possible.
+
+    Falls back to the absolute POSIX form when ``p`` is not under cwd
+    (e.g. different drives on Windows, or paths escaping cwd via ``..``).
+    Using a relative path keeps the committed attempt JSON portable
+    across machines (spec §6.2 example).
+    """
+    abs_p = p.resolve() if p.exists() else p.absolute()
+    try:
+        return abs_p.relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return abs_p.as_posix()
 
 
 def compute_attempt_id(finished_at: str, attempt_label: str) -> str:
@@ -77,6 +94,37 @@ def _load_questions(path: Path) -> dict[str, dict]:
                 raise SubmitError(f"{path}:{lineno} missing or invalid 'id'")
             if qid in questions:
                 raise SubmitError(f"duplicate question id in bank: {qid}")
+            # Validate fields required by the normalization loop so a
+            # malformed bank row produces a clean SubmitError rather than
+            # a raw KeyError traceback.
+            if "answer" not in record:
+                raise SubmitError(f"{path}:{lineno} missing required field 'answer'")
+            if record["answer"] not in ("A", "B", "C", "D"):
+                raise SubmitError(
+                    f"{path}:{lineno} invalid 'answer' (must be one of A,B,C,D)"
+                )
+            if "domain" not in record:
+                raise SubmitError(f"{path}:{lineno} missing required field 'domain'")
+            if record["domain"] not in ("D1", "D2", "D3", "D4", "D5"):
+                raise SubmitError(
+                    f"{path}:{lineno} invalid 'domain' (must be one of D1..D5)"
+                )
+            if "scenario" not in record:
+                raise SubmitError(f"{path}:{lineno} missing required field 'scenario'")
+            if not isinstance(record["scenario"], str) or not record["scenario"]:
+                raise SubmitError(
+                    f"{path}:{lineno} invalid 'scenario' (must be a non-empty string)"
+                )
+            if "concept_tags" not in record:
+                raise SubmitError(
+                    f"{path}:{lineno} missing required field 'concept_tags'"
+                )
+            if not isinstance(record["concept_tags"], list) or not all(
+                isinstance(t, str) for t in record["concept_tags"]
+            ):
+                raise SubmitError(
+                    f"{path}:{lineno} invalid 'concept_tags' (must be a list of strings)"
+                )
             questions[qid] = record
     if not questions:
         raise SubmitError(f"question bank is empty: {path}")
@@ -95,6 +143,13 @@ def _load_answers(path: Path) -> dict[str, Any]:
     for key in ("attempt_label", "started_at", "finished_at", "answers"):
         if key not in data:
             raise SubmitError(f"{path}: missing required key '{key}'")
+    if (
+        not isinstance(data["attempt_label"], str)
+        or not data["attempt_label"].strip()
+    ):
+        raise SubmitError(
+            f"{path}: 'attempt_label' must be a non-empty string"
+        )
     if not isinstance(data["answers"], list):
         raise SubmitError(f"{path}: 'answers' must be an array")
     return data
@@ -172,7 +227,7 @@ def submit(
         "attempt_label": raw["attempt_label"],
         "started_at": raw["started_at"],
         "finished_at": raw["finished_at"],
-        "question_bank_path": str(questions_path),
+        "question_bank_path": _store_path(questions_path),
         "answers": normalized,
         "totals": {
             "total": len(normalized),
@@ -182,7 +237,30 @@ def submit(
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     serialized = json.dumps(attempt, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
-    out_path.write_text(serialized, encoding="utf-8")
+
+    # Atomic write: stream to a sibling temp file, fsync, then os.replace
+    # which is atomic on POSIX. This avoids a torn out_path if the process
+    # is killed mid-write and narrows the TOCTOU window for --force.
+    tmp_fd, tmp_name = tempfile.mkstemp(
+        prefix=out_path.name + ".",
+        suffix=".tmp",
+        dir=str(out_path.parent),
+    )
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+            tmp_file.write(serialized)
+            tmp_file.flush()
+            os.fsync(tmp_file.fileno())
+        os.replace(tmp_path, out_path)
+    except BaseException:
+        # Best-effort cleanup; never mask the original exception.
+        try:
+            if tmp_path.exists():
+                tmp_path.unlink()
+        except OSError:
+            pass
+        raise
     return attempt
 
 

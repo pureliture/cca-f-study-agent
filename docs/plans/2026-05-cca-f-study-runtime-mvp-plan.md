@@ -334,11 +334,15 @@ Fixtures:
 Tests:
 - `test_attempt_id_is_deterministic` — same `finished_at` + `attempt_label` → same `attempt_id` across runs.
 - `test_answers_are_joined_with_domain_scenario_tags` — joined fields match the bank.
-- `test_correctness_flag_is_computed` — `is_correct == (choice == correct)`.
-- `test_missing_answers_recorded_as_null_incorrect` — partial answers produce `{choice: null, is_correct: false}` rows for unanswered questions.
-- `test_unknown_question_id_aborts` — submission fails with a clear error and non-zero exit.
+- `test_correctness_flag_matches_answer_key` — `is_correct == (choice == correct)`.
+- `test_missing_answers_filled_with_null_and_marked_incorrect` — partial answers produce `{choice: null, is_correct: false}` rows for unanswered questions.
+- `test_unknown_question_id_aborts` — submission fails with a clear error and no output file.
 - `test_overwrite_refused_without_force` — second run on same `--out` exits non-zero unless `--force` is passed.
-- `test_totals_match_answers_length_and_correct_count`.
+- `test_complete_attempt_totals` — `totals.total == len(answers)`, `totals.correct == sum(is_correct)`.
+
+Additional regression coverage delivered alongside the plan-named tests (separate file `tests/test_submit_attempt_coverage.py` plus appended tests in `tests/test_submit_attempt.py`):
+- partial output schema validation, explicit null choice, empty answers, duplicate `question_id` in answers, non-A/B/C/D choice, error-message contains the offending id, sample-attempt schema snapshot.
+- post-review hardening: malformed bank row raises `SubmitError`, atomic write (no `.tmp` leftover), empty/whitespace `attempt_label` aborts, `question_bank_path` stored as a CWD-relative POSIX string.
 
 ### 5.4 Implementation steps
 1. Tests red.

@@ -1,0 +1,10 @@
+{
+  "attempt_label": "test-null",
+  "started_at": "2026-05-12T09:00:00Z",
+  "finished_at": "2026-05-12T10:00:00Z",
+  "answers": [
+    { "question_id": "Q1", "choice": null },
+    { "question_id": "Q2", "choice": "B" },
+    { "question_id": "Q3", "choice": "C" }
+  ]
+}

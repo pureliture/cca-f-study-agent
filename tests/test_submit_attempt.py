@@ -210,3 +210,131 @@ def test_cli_overwrite_guard_exits_nonzero(tmp_path):
     )
     assert proc.returncode != 0
     assert out.read_text(encoding="utf-8") == "{}"
+
+
+# ---------------------------------------------------------------------------
+# Regression tests for review fixes (malformed bank, atomic write, label
+# validation, portable question_bank_path).
+# ---------------------------------------------------------------------------
+
+
+def test_malformed_bank_row_raises_submit_error(tmp_path):
+    """Fix 1: a bank row missing 'answer' must raise SubmitError (not KeyError)."""
+    bad_bank = tmp_path / "bad_bank.jsonl"
+    # Q1 is valid; Q2 (line 2) is malformed — missing required 'answer'.
+    bad_bank.write_text(
+        '{"id":"Q1","source":"g","domain":"D1","scenario":"s","difficulty":"easy",'
+        '"stem":"s","choices":{"A":"a","B":"b","C":"c","D":"d"},"answer":"A",'
+        '"explanation":"e","concept_tags":[],"status":"official"}\n'
+        '{"id":"Q2","stem":"only-stem"}\n',
+        encoding="utf-8",
+    )
+    out = tmp_path / "attempt.json"
+    with pytest.raises(sa.SubmitError) as exc:
+        sa.submit(questions_path=bad_bank, answers_path=ANSWERS_COMPLETE, out_path=out)
+    msg = str(exc.value)
+    assert ":2" in msg, f"expected line number in error message, got: {msg}"
+    assert "answer" in msg, f"expected missing field name in error message, got: {msg}"
+    assert not out.exists()
+
+
+def test_atomic_write_does_not_leave_tmp_on_success(tmp_path):
+    """Fix 2: after a successful write, no sibling .tmp file remains."""
+    out = tmp_path / "attempt.json"
+    sa.submit(questions_path=QUESTIONS_SMALL, answers_path=ANSWERS_COMPLETE, out_path=out)
+    assert out.exists()
+    leftovers = [p for p in tmp_path.iterdir() if p.name != out.name]
+    assert leftovers == [], f"unexpected sibling files after atomic write: {leftovers}"
+    # Specifically: no *.tmp anywhere in the parent.
+    assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_atomic_write_cleans_tmp_on_error(tmp_path):
+    """Fix 2: if the rename fails, the .tmp file must not be left behind.
+
+    We make the rename fail by making out_path a directory — os.replace
+    cannot replace a non-empty directory with a file on POSIX.
+    """
+    out = tmp_path / "attempt.json"
+    out.mkdir()
+    (out / "marker").write_text("blocker", encoding="utf-8")
+    with pytest.raises(Exception):
+        sa.submit(
+            questions_path=QUESTIONS_SMALL,
+            answers_path=ANSWERS_COMPLETE,
+            out_path=out,
+            force=True,
+        )
+    assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_empty_attempt_label_aborts(tmp_path):
+    """Fix 3: an empty attempt_label must be rejected before any write."""
+    answers = tmp_path / "answers.json"
+    answers.write_text(
+        json.dumps(
+            {
+                "attempt_label": "",
+                "started_at": "2026-05-11T09:00:00Z",
+                "finished_at": "2026-05-11T10:00:00Z",
+                "answers": [
+                    {"question_id": "Q1", "choice": "A"},
+                    {"question_id": "Q2", "choice": "B"},
+                    {"question_id": "Q3", "choice": "C"},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "attempt.json"
+    with pytest.raises(sa.SubmitError) as exc:
+        sa.submit(questions_path=QUESTIONS_SMALL, answers_path=answers, out_path=out)
+    assert "attempt_label" in str(exc.value)
+    assert not out.exists()
+
+
+def test_whitespace_only_attempt_label_aborts(tmp_path):
+    """Fix 3: whitespace-only attempt_label must also be rejected."""
+    answers = tmp_path / "answers.json"
+    answers.write_text(
+        json.dumps(
+            {
+                "attempt_label": "   ",
+                "started_at": "2026-05-11T09:00:00Z",
+                "finished_at": "2026-05-11T10:00:00Z",
+                "answers": [
+                    {"question_id": "Q1", "choice": "A"},
+                    {"question_id": "Q2", "choice": "B"},
+                    {"question_id": "Q3", "choice": "C"},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "attempt.json"
+    with pytest.raises(sa.SubmitError):
+        sa.submit(questions_path=QUESTIONS_SMALL, answers_path=answers, out_path=out)
+    assert not out.exists()
+
+
+def test_question_bank_path_is_relative_when_under_cwd(tmp_path, monkeypatch):
+    """Fix 4: when --questions is under cwd, the stored path is POSIX-relative."""
+    monkeypatch.chdir(REPO_ROOT)
+    out = tmp_path / "attempt.json"
+    # QUESTIONS_SMALL is an absolute path under REPO_ROOT.
+    sa.submit(
+        questions_path=QUESTIONS_SMALL,
+        answers_path=ANSWERS_COMPLETE,
+        out_path=out,
+    )
+    stored = _read(out)["question_bank_path"]
+    assert not stored.startswith("/"), f"expected relative path, got: {stored}"
+    assert str(REPO_ROOT) not in stored, f"abs repo prefix leaked: {stored}"
+    assert stored == "tests/fixtures/attempts/questions_small.jsonl"
+
+
+def test_committed_sample_attempt_stores_relative_question_bank_path():
+    """Fix 4: the committed sample attempt uses the spec's relative path form."""
+    sample = REPO_ROOT / "05-learning-data" / "attempts" / "sample-attempt.json"
+    data = json.loads(sample.read_text(encoding="utf-8"))
+    assert data["question_bank_path"] == "02-question-bank/seed/sample-questions.jsonl"
