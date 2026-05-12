@@ -1,0 +1,17 @@
+{
+  "attempt_label": "self-mock-001",
+  "started_at": "2026-05-11T09:00:00Z",
+  "finished_at": "2026-05-11T10:00:00Z",
+  "answers": [
+    { "question_id": "Q-D1-001", "choice": "B" },
+    { "question_id": "Q-D1-002", "choice": "B" },
+    { "question_id": "Q-D2-001", "choice": "A" },
+    { "question_id": "Q-D2-002", "choice": "C" },
+    { "question_id": "Q-D3-001", "choice": "B" },
+    { "question_id": "Q-D3-002", "choice": "B" },
+    { "question_id": "Q-D4-001", "choice": "A" },
+    { "question_id": "Q-D4-002", "choice": "A" },
+    { "question_id": "Q-D5-001", "choice": "B" },
+    { "question_id": "Q-D5-002", "choice": "B" }
+  ]
+}

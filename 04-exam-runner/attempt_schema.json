@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cca-f-study/schemas/attempt.schema.json",
+  "title": "CCA-F Attempt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "attempt_id",
+    "attempt_label",
+    "started_at",
+    "finished_at",
+    "question_bank_path",
+    "answers",
+    "totals"
+  ],
+  "properties": {
+    "attempt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "question_bank_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "domain",
+          "scenario",
+          "concept_tags",
+          "choice",
+          "correct",
+          "is_correct"
+        ],
+        "properties": {
+          "question_id": { "type": "string", "minLength": 1 },
+          "domain": { "type": "string", "enum": ["D1", "D2", "D3", "D4", "D5"] },
+          "scenario": { "type": "string", "minLength": 1 },
+          "concept_tags": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "choice": {
+            "anyOf": [
+              { "type": "string", "enum": ["A", "B", "C", "D"] },
+              { "type": "null" }
+            ]
+          },
+          "correct": { "type": "string", "enum": ["A", "B", "C", "D"] },
+          "is_correct": { "type": "boolean" }
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "correct"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "correct": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

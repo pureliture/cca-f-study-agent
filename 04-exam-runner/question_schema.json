@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cca-f-study/schemas/question.schema.json",
+  "title": "CCA-F Question",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "source",
+    "domain",
+    "scenario",
+    "difficulty",
+    "stem",
+    "choices",
+    "answer",
+    "explanation",
+    "concept_tags",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["D1", "D2", "D3", "D4", "D5"]
+    },
+    "scenario": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 1
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"]
+    },
+    "stem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "choices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B", "C", "D"],
+      "properties": {
+        "A": { "type": "string", "minLength": 1 },
+        "B": { "type": "string", "minLength": 1 },
+        "C": { "type": "string", "minLength": 1 },
+        "D": { "type": "string", "minLength": 1 }
+      }
+    },
+    "answer": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D"]
+    },
+    "explanation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "concept_tags": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "minLength": 1
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["official", "unofficial", "draft", "retired"]
+    }
+  }
+}

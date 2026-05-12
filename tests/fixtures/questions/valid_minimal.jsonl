@@ -1,0 +1,2 @@
+{"id":"T-001","source":"guide_en","domain":"D1","scenario":"agentic-orchestration","difficulty":"easy","stem":"stem-1","choices":{"A":"a","B":"b","C":"c","D":"d"},"answer":"A","explanation":"e","concept_tags":["tool-use"],"status":"official"}
+{"id":"T-002","source":"guide_en","domain":"D2","scenario":"tool-schema-design","difficulty":"medium","stem":"stem-2","choices":{"A":"a","B":"b","C":"c","D":"d"},"answer":"B","explanation":"e","concept_tags":["tool-schema"],"status":"unofficial"}
