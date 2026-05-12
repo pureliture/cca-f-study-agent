@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CCA-F Study Agent Loop Architecture</title>
+  <style>
+    :root {
+      --ink: #15202b;
+      --muted: #5c6672;
+      --line: #d9dfe7;
+      --paper: #f6f7f9;
+      --panel: #ffffff;
+      --control: #eaf3ff;
+      --source: #eef7ed;
+      --question: #fff1dc;
+      --attempt: #f2eeff;
+      --analysis: #ffeef2;
+      --action: #eef6f5;
+      --future: #f2f4f7;
+      --accent: #245c64;
+      --orange: #9b5b00;
+      --green: #2f6e47;
+      --red: #9a384c;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 60px;
+    }
+
+    header {
+      padding: 0 0 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    p { margin: 0 0 10px; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #eef1f5;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font-size: 0.92em;
+    }
+
+    .lede {
+      max-width: 940px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .section {
+      margin: 18px 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      border: 1px solid rgba(0, 0, 0, 0.09);
+    }
+
+    .control { background: var(--control); }
+    .source { background: var(--source); }
+    .question { background: var(--question); }
+    .attempt { background: var(--attempt); }
+    .analysis { background: var(--analysis); }
+    .action { background: var(--action); }
+    .future { background: var(--future); }
+
+    .loop-shell {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .agent-column {
+      display: grid;
+      gap: 10px;
+    }
+
+    .agent {
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 120px;
+    }
+
+    .agent .role {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .agent p, .artifact p, .contract p, .phase p, .edge p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .core-loop {
+      position: relative;
+      min-height: 520px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(36, 92, 100, 0.08) 49%, rgba(36, 92, 100, 0.08) 51%, transparent 51%),
+        linear-gradient(180deg, transparent 49%, rgba(36, 92, 100, 0.08) 49%, rgba(36, 92, 100, 0.08) 51%, transparent 51%),
+        #fff;
+      padding: 18px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orbit {
+      width: min(440px, 100%);
+      aspect-ratio: 1;
+      border: 2px solid #9bbcc0;
+      border-radius: 999px;
+      position: relative;
+    }
+
+    .orbit-center {
+      position: absolute;
+      inset: 35%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 999px;
+      background: var(--control);
+      border: 1px solid #9fb9d5;
+      padding: 10px;
+      font-weight: 700;
+    }
+
+    .node {
+      position: absolute;
+      width: 124px;
+      min-height: 74px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--radius);
+      padding: 8px;
+      background: #fff;
+      text-align: center;
+      font-size: 13px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    .node b {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .n1 { top: -20px; left: calc(50% - 62px); }
+    .n2 { top: 24%; right: -28px; }
+    .n3 { bottom: 24%; right: -28px; }
+    .n4 { bottom: -20px; left: calc(50% - 62px); }
+    .n5 { bottom: 24%; left: -28px; }
+    .n6 { top: 24%; left: -28px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .artifact, .contract, .phase, .edge {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 13px;
+    }
+
+    .pipe {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(120px, 1fr));
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .pipe-step {
+      position: relative;
+      min-height: 112px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: var(--radius);
+      padding: 10px;
+    }
+
+    .pipe-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -8px;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid #6b7380;
+      border-right: 2px solid #6b7380;
+      transform: translateY(-50%) rotate(45deg);
+      z-index: 1;
+    }
+
+    .swimlane {
+      display: grid;
+      grid-template-columns: 170px repeat(6, 1fr);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .swimlane > div {
+      min-height: 76px;
+      padding: 10px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .swimlane > div:nth-child(7n) { border-right: 0; }
+    .swimlane > div:nth-last-child(-n+7) { border-bottom: 0; }
+
+    .head {
+      font-weight: 700;
+      background: #f1f3f6;
+    }
+
+    .actor {
+      font-weight: 700;
+      background: #f8fafc;
+    }
+
+    .status {
+      display: inline-block;
+      margin: 4px 4px 0 0;
+      padding: 2px 7px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mvp { border-left: 5px solid var(--green); }
+    .deferred { border-left: 5px solid var(--orange); }
+    .risk { border-left: 5px solid var(--red); }
+
+    .note {
+      margin-top: 12px;
+      border-left: 4px solid var(--accent);
+      border-radius: 4px;
+      background: #f0f8f8;
+      color: #244c50;
+      padding: 10px 12px;
+    }
+
+    @media (max-width: 1050px) {
+      .loop-shell, .grid-2, .grid-3, .grid-4, .pipe {
+        grid-template-columns: 1fr;
+      }
+
+      .core-loop {
+        min-height: 680px;
+      }
+
+      .orbit {
+        width: 360px;
+      }
+
+      .node {
+        width: 118px;
+      }
+
+      .swimlane {
+        grid-template-columns: 130px 1fr;
+      }
+
+      .swimlane > div,
+      .swimlane > div:nth-child(7n),
+      .swimlane > div:nth-last-child(-n+7) {
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .head:nth-child(n+3) {
+        display: none;
+      }
+
+      .pipe-step:not(:last-child)::after {
+        top: auto;
+        right: 50%;
+        bottom: -8px;
+        transform: translateX(50%) rotate(135deg);
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>CCA-F 학습 루프 에이전트 구성도</h1>
+    <p class="lede">
+      이 문서는 유스케이스가 아니라, CCA-F 학습 시스템을 지속적으로 완성해가기 위한
+      <b>운영 아키텍처 지도</b>다. 여기서 “에이전트”는 반드시 독립 실행 AI 프로세스를 뜻하지 않는다.
+      MVP에서는 대부분 CLI와 파일 계약으로 구현되고, 이후 자동화가 붙을 때 각 역할이 실제 agent/skill/script로 분리될 수 있다.
+    </p>
+    <div class="legend">
+      <span class="chip"><span class="dot control"></span>Control / orchestration</span>
+      <span class="chip"><span class="dot source"></span>Source / map</span>
+      <span class="chip"><span class="dot question"></span>Question operations</span>
+      <span class="chip"><span class="dot attempt"></span>Attempt operations</span>
+      <span class="chip"><span class="dot analysis"></span>Analysis</span>
+      <span class="chip"><span class="dot action"></span>Study action</span>
+      <span class="chip"><span class="dot future"></span>Deferred automation</span>
+    </div>
+  </header>
+
+  <section class="section">
+    <h2>1. 전체 루프: 관찰 → 진단 → 결정 → 실행 → 기록</h2>
+    <div class="loop-shell">
+      <div class="agent-column">
+        <div class="agent source">
+          <span class="role">Source Indexer</span>
+          <h3>출처와 시험 구조를 고정한다</h3>
+          <p><code>source-register</code>, domain map, scenario map, NotebookLM index를 관리한다.</p>
+        </div>
+        <div class="agent question">
+          <span class="role">Question Curator</span>
+          <h3>문제 후보를 검증 가능한 은행으로 만든다</h3>
+          <p>문제 생성, 외부 문제 staging, 중복/출처/상태 검증을 담당한다.</p>
+        </div>
+        <div class="agent attempt">
+          <span class="role">Exam Composer</span>
+          <h3>오늘 풀 문제 세트를 고른다</h3>
+          <p>전체 균형형, 취약 개념 집중형, 회차 복습형 세트를 구성한다.</p>
+        </div>
+      </div>
+
+      <div class="core-loop">
+        <div class="orbit" aria-label="Learning loop">
+          <div class="orbit-center">Study<br>Orchestrator</div>
+          <div class="node n1 source"><b>Observe</b><span>attempts, maps, lab status</span></div>
+          <div class="node n2 analysis"><b>Diagnose</b><span>weak domains and concepts</span></div>
+          <div class="node n3 control"><b>Decide</b><span>next exam set or lab</span></div>
+          <div class="node n4 action"><b>Act</b><span>solve, review, practice</span></div>
+          <div class="node n5 attempt"><b>Record</b><span>attempt JSON and notes</span></div>
+          <div class="node n6 question"><b>Adjust</b><span>question mix and coverage</span></div>
+        </div>
+      </div>
+
+      <div class="agent-column">
+        <div class="agent attempt">
+          <span class="role">Attempt Normalizer</span>
+          <h3>답안을 분석 가능한 기록으로 바꾼다</h3>
+          <p>answers JSON을 question bank와 join해 append-only attempt로 저장한다.</p>
+        </div>
+        <div class="agent analysis">
+          <span class="role">Scoring Analyst</span>
+          <h3>점수와 약점을 계산한다</h3>
+          <p>scaled score, pass gap, domain/scenario/concept breakdown을 만든다.</p>
+        </div>
+        <div class="agent action">
+          <span class="role">Study Planner</span>
+          <h3>다음 학습 행동을 추천한다</h3>
+          <p>weak concept와 lab status를 연결해 다음 복습/실습을 정한다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      핵심 설계 원칙: 에이전트의 판단은 PDF를 직접 읽지 않는다. 런타임 판단은 이미 정규화된
+      <code>question_bank</code>, <code>attempts</code>, <code>lab-status</code>, <code>dashboard-data</code>에서만 수행된다.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>2. 에이전트 역할별 계약</h2>
+    <div class="grid-3">
+      <div class="contract source mvp">
+        <h3>Source Indexer</h3>
+        <p><b>입력:</b> source PDF, source register, domain/scenario maps</p>
+        <p><b>출력:</b> 안정적인 source id와 시험 구조</p>
+        <p><b>결정:</b> 어떤 출처가 active인지, 어떤 source id를 문제에 허용할지</p>
+      </div>
+      <div class="contract question mvp">
+        <h3>Question Curator</h3>
+        <p><b>입력:</b> seed/generated/reviewed JSONL</p>
+        <p><b>출력:</b> 검증 통과한 출제 가능 문제 pool</p>
+        <p><b>결정:</b> draft, unofficial, reviewed, rejected 상태</p>
+      </div>
+      <div class="contract attempt mvp">
+        <h3>Attempt Normalizer</h3>
+        <p><b>입력:</b> question bank, learner answers</p>
+        <p><b>출력:</b> domain/scenario/tag가 포함된 attempt JSON</p>
+        <p><b>결정:</b> unknown question 실패, missing answer는 incorrect 처리</p>
+      </div>
+      <div class="contract analysis mvp">
+        <h3>Scoring Analyst</h3>
+        <p><b>입력:</b> normalized attempt</p>
+        <p><b>출력:</b> raw/scaled score, pass gap, breakdowns</p>
+        <p><b>결정:</b> 720 기준 합격 여부와 약점 ranking</p>
+      </div>
+      <div class="contract analysis mvp">
+        <h3>Progress Aggregator</h3>
+        <p><b>입력:</b> all attempts, lab-status</p>
+        <p><b>출력:</b> deterministic dashboard-data.json</p>
+        <p><b>결정:</b> latest attempt, trend, recommended_next</p>
+      </div>
+      <div class="contract action mvp">
+        <h3>Study Planner</h3>
+        <p><b>입력:</b> weak concepts, lab progress, trend</p>
+        <p><b>출력:</b> 다음 mock exam 방향과 lab/복습 후보</p>
+        <p><b>결정:</b> 반복 오답을 줄이는 다음 행동</p>
+      </div>
+      <div class="contract future deferred">
+        <h3>External Intake Agent</h3>
+        <p><b>입력:</b> community repo/site, user-provided files</p>
+        <p><b>출력:</b> provenance가 있는 generated JSONL</p>
+        <p><b>경계:</b> post-MVP. 자동 scraping은 MVP 밖이다.</p>
+      </div>
+      <div class="contract future deferred">
+        <h3>Question Generator</h3>
+        <p><b>입력:</b> 학습 노트, weak concepts, 사람이 지정한 범위</p>
+        <p><b>출력:</b> draft/unofficial question candidates</p>
+        <p><b>경계:</b> 생성 결과는 검증/리뷰 전 출제 확정 아님</p>
+      </div>
+      <div class="contract future deferred">
+        <h3>Dashboard Designer</h3>
+        <p><b>입력:</b> dashboard-data contract, learner questions</p>
+        <p><b>출력:</b> wireframe, component map, static dashboard</p>
+        <p><b>경계:</b> MVP에서는 vanilla HTML/CSS/JS만 사용</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>3. 데이터 파이프라인과 에이전트 배치</h2>
+    <div class="pipe">
+      <div class="pipe-step source">
+        <h3>Source</h3>
+        <p><code>guide_en.pdf</code><br><code>source-register.md</code></p>
+      </div>
+      <div class="pipe-step source">
+        <h3>Maps</h3>
+        <p><code>domain-map.md</code><br><code>scenario-map.md</code></p>
+      </div>
+      <div class="pipe-step question">
+        <h3>Question Pool</h3>
+        <p><code>seed</code><br><code>generated</code><br><code>reviewed</code></p>
+      </div>
+      <div class="pipe-step question">
+        <h3>Validation</h3>
+        <p><code>validate_questions</code><br>schema/source/scenario</p>
+      </div>
+      <div class="pipe-step attempt">
+        <h3>Exam Set</h3>
+        <p>balanced<br>weak-focused<br>review</p>
+      </div>
+      <div class="pipe-step attempt">
+        <h3>Attempt</h3>
+        <p><code>answers.json</code><br><code>attempt.json</code></p>
+      </div>
+      <div class="pipe-step analysis">
+        <h3>Analysis</h3>
+        <p>score<br>breakdowns<br>trend</p>
+      </div>
+      <div class="pipe-step action">
+        <h3>Action</h3>
+        <p>next lab<br>next exam mix<br>review notes</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>4. 운영 관점 swimlane</h2>
+    <div class="swimlane">
+      <div class="head">Role / 단계</div>
+      <div class="head">출처 고정</div>
+      <div class="head">문제 준비</div>
+      <div class="head">회차 구성</div>
+      <div class="head">풀이 기록</div>
+      <div class="head">분석/대시보드</div>
+      <div class="head">다음 행동</div>
+
+      <div class="actor">학습자</div>
+      <div>NotebookLM/PDF로 이해</div>
+      <div>오늘 풀 범위 선택</div>
+      <div>balanced 또는 weak-focused 선택</div>
+      <div>answers JSON 제출</div>
+      <div>pass gap과 trend 확인</div>
+      <div>lab/복습 수행</div>
+
+      <div class="actor">에이전트/스크립트</div>
+      <div class="source">Source Indexer</div>
+      <div class="question">Question Curator<br>Validator</div>
+      <div class="attempt">Exam Composer</div>
+      <div class="attempt">Attempt Normalizer</div>
+      <div class="analysis">Scoring Analyst<br>Progress Aggregator</div>
+      <div class="action">Study Planner</div>
+
+      <div class="actor">저장소 artifact</div>
+      <div><code>00-meta/*</code><br><code>01-sources/*</code></div>
+      <div><code>02-question-bank/*</code></div>
+      <div><code>exam-set manifest</code></div>
+      <div><code>05-learning-data/attempts/*</code></div>
+      <div><code>dashboard-data.json</code></div>
+      <div><code>lab-status.json</code><br><code>wrong-answer-log.md</code></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>5. MVP와 이후 자동화의 경계</h2>
+    <div class="grid-2">
+      <div class="edge mvp">
+        <h3>MVP에서 구현하는 루프</h3>
+        <p>local JSON/JSONL 기반으로 validate → submit → score → export → dashboard를 완성한다.</p>
+        <span class="status">no network</span>
+        <span class="status">no PDF parsing</span>
+        <span class="status">static dashboard</span>
+        <span class="status">append-only attempts</span>
+      </div>
+      <div class="edge deferred">
+        <h3>post-MVP로 미루는 자동화</h3>
+        <p>외부 문제 intake, 문제 자동 생성, duplicate similarity, source-site parser, React dashboard는 MVP 완료 후에 붙인다.</p>
+        <span class="status">external intake</span>
+        <span class="status">question generation</span>
+        <span class="status">crawler/parser</span>
+        <span class="status">dashboard v2</span>
+      </div>
+      <div class="edge risk">
+        <h3>항상 지켜야 하는 안전선</h3>
+        <p>generated/community 문제를 official로 표시하지 않는다. 출처/라이선스/검수 상태 없이 practice pool에 넣지 않는다.</p>
+        <span class="status">status != official</span>
+        <span class="status">provenance required</span>
+        <span class="status">review gate</span>
+      </div>
+      <div class="edge control">
+        <h3>업데이트할 때 보는 기준</h3>
+        <p>새 기능은 어느 에이전트 역할에 속하는지, 입력/출력 artifact가 무엇인지, dashboard의 어떤 learner question을 개선하는지로 판단한다.</p>
+        <span class="status">role</span>
+        <span class="status">contract</span>
+        <span class="status">artifact</span>
+        <span class="status">feedback</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>6. 앞으로 구조를 완성할 때의 체크리스트</h2>
+    <div class="grid-4">
+      <div class="phase">
+        <h3>역할 추가</h3>
+        <p>새 자동화가 생기면 먼저 어느 agent role인지 정한다. 기존 역할에 들어가면 새 역할을 만들지 않는다.</p>
+      </div>
+      <div class="phase">
+        <h3>입출력 고정</h3>
+        <p>각 역할은 파일/JSON 계약으로 연결한다. 암묵적으로 PDF나 웹페이지를 읽는 흐름은 만들지 않는다.</p>
+      </div>
+      <div class="phase">
+        <h3>검증 게이트</h3>
+        <p>생성/가져오기/정규화 단계마다 실패 조건을 먼저 둔다. 특히 source, status, duplicate를 확인한다.</p>
+      </div>
+      <div class="phase">
+        <h3>피드백 연결</h3>
+        <p>대시보드 결과가 다음 문제 세트, lab 추천, 복습 노트 중 어디로 돌아가는지 명확히 연결한다.</p>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>
