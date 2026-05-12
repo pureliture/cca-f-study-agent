@@ -1,0 +1,133 @@
+{
+  "answers": [
+    {
+      "choice": "B",
+      "concept_tags": [
+        "tool-use",
+        "agent-loop"
+      ],
+      "correct": "B",
+      "domain": "D1",
+      "is_correct": true,
+      "question_id": "Q-D1-001",
+      "scenario": "agentic-orchestration"
+    },
+    {
+      "choice": "B",
+      "concept_tags": [
+        "subagent",
+        "context-isolation"
+      ],
+      "correct": "B",
+      "domain": "D1",
+      "is_correct": true,
+      "question_id": "Q-D1-002",
+      "scenario": "subagent-delegation"
+    },
+    {
+      "choice": "A",
+      "concept_tags": [
+        "tool-schema",
+        "tool-selection"
+      ],
+      "correct": "A",
+      "domain": "D2",
+      "is_correct": true,
+      "question_id": "Q-D2-001",
+      "scenario": "tool-schema-design"
+    },
+    {
+      "choice": "C",
+      "concept_tags": [
+        "mcp",
+        "tool-discovery"
+      ],
+      "correct": "B",
+      "domain": "D2",
+      "is_correct": false,
+      "question_id": "Q-D2-002",
+      "scenario": "mcp-integration"
+    },
+    {
+      "choice": "B",
+      "concept_tags": [
+        "claude-md",
+        "project-rules"
+      ],
+      "correct": "B",
+      "domain": "D3",
+      "is_correct": true,
+      "question_id": "Q-D3-001",
+      "scenario": "claude-code-config"
+    },
+    {
+      "choice": "B",
+      "concept_tags": [
+        "hooks",
+        "settings-json"
+      ],
+      "correct": "B",
+      "domain": "D3",
+      "is_correct": true,
+      "question_id": "Q-D3-002",
+      "scenario": "claude-code-hooks"
+    },
+    {
+      "choice": "A",
+      "concept_tags": [
+        "json-prefill",
+        "stop-sequences"
+      ],
+      "correct": "B",
+      "domain": "D4",
+      "is_correct": false,
+      "question_id": "Q-D4-001",
+      "scenario": "structured-output"
+    },
+    {
+      "choice": "A",
+      "concept_tags": [
+        "system-prompt",
+        "step-by-step"
+      ],
+      "correct": "A",
+      "domain": "D4",
+      "is_correct": true,
+      "question_id": "Q-D4-002",
+      "scenario": "prompt-design"
+    },
+    {
+      "choice": "B",
+      "concept_tags": [
+        "context-window",
+        "summarization"
+      ],
+      "correct": "B",
+      "domain": "D5",
+      "is_correct": true,
+      "question_id": "Q-D5-001",
+      "scenario": "context-budgeting"
+    },
+    {
+      "choice": "B",
+      "concept_tags": [
+        "idempotency",
+        "retry"
+      ],
+      "correct": "B",
+      "domain": "D5",
+      "is_correct": true,
+      "question_id": "Q-D5-002",
+      "scenario": "retry-and-idempotency"
+    }
+  ],
+  "attempt_id": "att-2026-05-11T10-00-00Z-self-mock-001",
+  "attempt_label": "self-mock-001",
+  "finished_at": "2026-05-11T10:00:00Z",
+  "question_bank_path": "02-question-bank/seed/sample-questions.jsonl",
+  "started_at": "2026-05-11T09:00:00Z",
+  "totals": {
+    "correct": 8,
+    "total": 10
+  }
+}

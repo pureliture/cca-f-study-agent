@@ -1,0 +1,3 @@
+{"id":"Q1","source":"guide_en","domain":"D1","scenario":"agentic-orchestration","difficulty":"easy","stem":"s1","choices":{"A":"a","B":"b","C":"c","D":"d"},"answer":"A","explanation":"e","concept_tags":["agent-loop","tool-use"],"status":"official"}
+{"id":"Q2","source":"guide_en","domain":"D2","scenario":"tool-schema-design","difficulty":"medium","stem":"s2","choices":{"A":"a","B":"b","C":"c","D":"d"},"answer":"B","explanation":"e","concept_tags":["tool-schema"],"status":"official"}
+{"id":"Q3","source":"guide_en","domain":"D3","scenario":"claude-code-config","difficulty":"hard","stem":"s3","choices":{"A":"a","B":"b","C":"c","D":"d"},"answer":"C","explanation":"e","concept_tags":["claude-md"],"status":"official"}
