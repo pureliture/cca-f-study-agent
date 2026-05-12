@@ -13,20 +13,22 @@
 
 These rules are non-negotiable and bind every phase below. A phase is **incomplete** if any of these is violated:
 
-- R1. **No runtime PDF parsing.** No script under `04-exam-runner/` or `06-dashboard/` may open `01-sources/en/guide_en.pdf` (or `02-notebooklm-upload/guide_en.pdf`) for read of *binary content* beyond computing a sha256 during one-shot registration. Runtime scoring/validation/aggregation must succeed with the PDF physically absent.
+- R1. **No runtime PDF parsing.** No script under `src/cca_f_study/`, `04-exam-runner/`, or `06-dashboard/` may open `01-sources/en/guide_en.pdf` for read of *binary content* beyond computing a sha256 during one-shot registration. Runtime scoring/validation/aggregation must succeed with the PDF physically absent.
 - R2. **No network I/O.** No `requests`, `httpx`, `urllib.request`, `socket`, `subprocess` to a network tool, etc., in runtime scripts. Tests must work offline.
 - R3. **No secrets / no API keys.** Scripts must not require any environment variable.
 - R4. **Dashboard stays static.** Plain HTML + vanilla JS + CSS. No build step, no React/Vue/Vite, no bundler, no CDN at runtime. A single vendored `<script src="./vendor/…">` is acceptable.
-- R5. **PDF is read-only.** Never write to `01-sources/en/guide_en.pdf`. The curated copy at `02-notebooklm-upload/guide_en.pdf` may be created once by `cp` during Phase 1 and is otherwise read-only.
+- R5. **PDF is read-only.** Never write to `01-sources/en/guide_en.pdf`. The Markdown companion at `01-sources/en/companion/guide_en.md` is also read-only and is not a runtime input.
 - R6. **TDD order, every phase.** Write failing tests → minimal implementation → tests green → refactor. Do not advance past a phase whose tests are not green.
 - R7. **Determinism.** All emitted JSON files must be stable across runs (sorted keys/lists, fixed indent). Tests assert byte-identical re-runs where applicable.
 - R8. **Unofficial flag.** Any question not authored from the registered source carries `status ∈ {unofficial, draft, retired}` — never `official`.
 
 ---
 
-## 1. Structural delta from spec §3
+## 1. Structural layout (aligned with spec §3)
 
-The spec described metadata files under `00-meta/`. Per `05-kr-pdf-구조-차이-반영.md` and `06-kr-pdf-없이-선구현-계획.md`, **this plan supersedes spec §3 on metadata location only**: the NotebookLM upload package replaces `00-meta/`. Raw sources remain canonical in `01-sources/`.
+Metadata for the MVP lives under **`00-meta/`** — this matches both spec §3 and the committed tree (see commit `0a6a3b4` "Bootstrap CCA-F study runtime MVP (phases 1-4)"). The runtime resolves source/scenario metadata from `00-meta/` only.
+
+A separate `02-notebooklm-upload/` directory is **not part of the MVP**. It is reserved for a later phase that *exports* a curated NotebookLM upload package from `00-meta/` + `01-sources/` (see `requirement/05-kr-pdf-구조-차이-반영.md` and `requirement/06-kr-pdf-없이-선구현-계획.md`). The MVP runtime does not read from it and the directory does not need to exist.
 
 **Resulting top-level layout for MVP (en-only source set "EN-CORE"):**
 
@@ -40,31 +42,25 @@ cca-f-study-agent/
 │   ├── plans/2026-05-cca-f-study-runtime-mvp-plan.md          # this file
 │   └── reviews/                                                # written by /review
 │
-├── 01-sources/
-│   └── en/
-│       └── guide_en.pdf                                        # canonical, read-only
-│
-├── 02-notebooklm-upload/                                       # curated upload package
-│   ├── guide_en.pdf                                            # curated copy of source
-│   ├── notebooklm-source-index.md
-│   ├── lab-catalog.md
+├── 00-meta/                                                    # canonical MVP metadata
+│   ├── source-register.md
 │   ├── domain-map.md
 │   ├── scenario-map.md
-│   └── glossary_en-kr.md
+│   └── notebooklm-source-index.md
+│
+├── 01-sources/
+│   └── en/
+│       ├── guide_en.pdf                                        # canonical, read-only
+│       └── companion/guide_en.md                               # token-efficient reference (not runtime input)
 │
 ├── 02-question-bank/
 │   ├── seed/sample-questions.jsonl
 │   ├── normalized/
-│   └── generated/
+│   └── generated/                                              # status != "official" enforced
 │
-├── 04-exam-runner/
-│   ├── __init__.py
+├── 04-exam-runner/                                             # canonical authoring copies of schemas
 │   ├── question_schema.json
-│   ├── attempt_schema.json
-│   ├── validate_questions.py
-│   ├── submit_attempt.py
-│   ├── score_attempt.py
-│   └── export_dashboard_data.py
+│   └── attempt_schema.json                                     # (runtime scripts arrive in later phases)
 │
 ├── 05-learning-data/
 │   ├── attempts/
@@ -72,8 +68,8 @@ cca-f-study-agent/
 │   ├── lab-status.json
 │   └── wrong-answer-log.md
 │
-├── 06-dashboard/
-│   ├── dashboard-spec.md                                       # written later
+├── 06-dashboard/                                               # populated in later phases
+│   ├── dashboard-spec.md
 │   ├── data/dashboard-data.json
 │   └── static/
 │       ├── index.html
@@ -83,75 +79,94 @@ cca-f-study-agent/
 ├── examples/
 │   └── attempts/sample-answers.json
 │
+├── src/cca_f_study/                                            # installed Python package
+│   ├── __init__.py
+│   ├── validate_questions.py
+│   ├── submit_attempt.py                                       # later phase
+│   ├── score_attempt.py                                        # later phase
+│   ├── export_dashboard_data.py                                # later phase
+│   └── _schemas/                                               # package-data copies of 04-exam-runner/*.json
+│       ├── question_schema.json
+│       └── attempt_schema.json
+│
 └── tests/
     ├── fixtures/…
-    ├── test_repo_skeleton.py
     ├── test_validate_questions.py
-    ├── test_submit_attempt.py
-    ├── test_score_attempt.py
-    └── test_export_dashboard_data.py
+    ├── test_review_findings.py
+    ├── test_submit_attempt.py                                  # later phase
+    ├── test_score_attempt.py                                   # later phase
+    └── test_export_dashboard_data.py                           # later phase
 ```
 
-Source-set declaration inside `02-notebooklm-upload/notebooklm-source-index.md` is forward-compatible with future `KR-LECTURES` batches (see `06-kr-pdf-없이-선구현-계획.md`), but the MVP only activates `EN-CORE`.
+### Schema discovery rule
+
+Schemas exist in **two** locations that must stay byte-identical:
+
+- `04-exam-runner/*.json` — canonical authoring copies (humans read/edit here; matches spec §3 file list).
+- `src/cca_f_study/_schemas/*.json` — package-data copies shipped with the wheel.
+
+The validator loads schemas via `importlib.resources` from `cca_f_study._schemas`, so the CLI works under wheel/target installs and from any working directory. A regression test (`tests/test_review_findings.py::test_packaged_schemas_match_canonical_files`) enforces that the two copies stay identical.
+
+### Forward-compat note (deferred)
+
+A future "export NotebookLM upload package" step will curate `02-notebooklm-upload/` from `00-meta/` + `01-sources/`, supporting batched uploads (`02-notebooklm-upload/kr-batch-01-core/`, etc.) as described in the reference docs. The MVP runtime is intentionally agnostic of that directory; nothing in the runtime needs to change when it is added.
 
 ---
 
 ## Phase 1 — Repository skeleton and metadata
 
 ### 1.1 Objective
-Establish the canonical directory tree, register the source PDF (read-only), and create the NotebookLM upload package for the active `EN-CORE` source set. Nothing executable yet beyond a smoke test that asserts the structure.
+Establish the canonical directory tree, register the source PDF (read-only), and author MVP metadata under `00-meta/`. Nothing executable yet beyond a smoke test that asserts the structure.
 
 ### 1.2 Files to create / modify
 - Create: `README.md` (one-paragraph repo intro + link to spec + plan)
-- Create: `pyproject.toml` (minimal — package name `cca_f_study`, src layout pointing at `04-exam-runner/`, dev deps `pytest`, `jsonschema`)
-- Create: directories `01-sources/en/`, `02-notebooklm-upload/`, `02-question-bank/{seed,normalized,generated}/`, `04-exam-runner/`, `05-learning-data/attempts/`, `06-dashboard/{data,static}/`, `examples/attempts/`, `tests/fixtures/`
-- Move: existing `./guide_en.pdf` (or `guide_en.MD`-paired PDF) into `01-sources/en/guide_en.pdf`. If only `guide_en.MD` exists in repo, treat the markdown as already the canonical "source of evidence" and place a placeholder note in `01-sources/en/README.md` describing how to drop the real PDF in.
-- Copy: `01-sources/en/guide_en.pdf` → `02-notebooklm-upload/guide_en.pdf` (curated copy).
-- Create: `02-notebooklm-upload/notebooklm-source-index.md` with two source-set blocks: `EN-CORE` (status: active) and `KR-LECTURES` (status: planned).
-- Create: `02-notebooklm-upload/lab-catalog.md` (table headers: `lab_id | domain | concept_tags | status | notes`, body empty/seeded).
-- Create: `02-notebooklm-upload/domain-map.md` (D1–D5 with title, weight, definition, link to canonical PDF page reference).
-- Create: `02-notebooklm-upload/scenario-map.md` (scenario id, name, related domains, examples).
-- Create: `02-notebooklm-upload/glossary_en-kr.md` (table of EN term ↔ KR term ↔ note; seeded with ≥ 10 entries pulled from spec terminology: agent, MCP, tool_use, scenario, etc.).
-- Create: `.gitignore` (`__pycache__/`, `.pytest_cache/`, `*.pyc`, `.DS_Store`).
+- Create: `pyproject.toml` (src layout exposing `cca_f_study`; dev deps `pytest`, `jsonschema`; `[tool.pytest.ini_options]` for `pythonpath = ["src"]`)
+- Create: directories `00-meta/`, `01-sources/en/`, `02-question-bank/{seed,normalized,generated}/`, `04-exam-runner/`, `05-learning-data/attempts/`, `06-dashboard/{data,static}/`, `examples/attempts/`, `src/cca_f_study/`, `tests/fixtures/`
+- Move: any root-level `./guide_en.pdf` into `01-sources/en/guide_en.pdf`. If the PDF is not yet present, record a `pending` sha256 in `00-meta/source-register.md` and provide step-by-step instructions to import it later.
+- (Optional) Place a token-efficient Markdown companion at `01-sources/en/companion/guide_en.md` (not a runtime input; declared in `source-register.md` as a companion, not a source).
+- Create: `00-meta/source-register.md` — Source IDs table with `guide_en` as the single active row; reserved (not active) entries documented separately; explicit read-only contract.
+- Create: `00-meta/domain-map.md` — D1–D5 with title, weight, brief definition, source reference.
+- Create: `00-meta/scenario-map.md` — scenario id (backticked, kebab-case), title, related domains; seeded with at least the scenarios used by the seed bank.
+- Create: `00-meta/notebooklm-source-index.md` — declares `EN-CORE` (status: active) and reserves `KR-LECTURES` (status: planned) for forward compatibility.
+- Create: `.gitignore` (`__pycache__/`, `.pytest_cache/`, `*.pyc`, `.DS_Store`, `*.egg-info/`, `.venv/`, `.claude/settings.local.json`).
 
-### 1.3 Tests to write first (`tests/test_repo_skeleton.py`)
-Each is a separate `test_*` function that **must fail before** the files exist:
+### 1.3 Tests to write first
+Smoke tests over the structure (kept lightweight — full validation comes in Phase 4):
 
-- `test_canonical_pdf_path_exists` — `01-sources/en/guide_en.pdf` exists (or the documented placeholder when only the markdown is available, with explicit xfail message).
-- `test_notebooklm_upload_package_files_exist` — every file listed in §1.2 under `02-notebooklm-upload/` is present.
-- `test_notebooklm_index_declares_active_en_core` — index file contains `EN-CORE` block with `Status: active`.
-- `test_notebooklm_index_reserves_kr_lectures_planned` — index file contains `KR-LECTURES` block with `Status: planned`.
+- `test_canonical_pdf_path_exists` — `01-sources/en/guide_en.pdf` exists, OR `00-meta/source-register.md` documents a `pending` import (xfail with explicit message).
+- `test_00_meta_files_present` — `source-register.md`, `domain-map.md`, `scenario-map.md`, `notebooklm-source-index.md`.
+- `test_notebooklm_index_declares_active_en_core` — index file contains an `EN-CORE` block with `Status: active`.
+- `test_notebooklm_index_reserves_kr_lectures_planned` — index file contains a `KR-LECTURES` block with `Status: planned`.
 - `test_domain_map_lists_d1_through_d5_with_weights` — domain map has D1–D5 rows and weights summing to 1.00 (±0.01).
-- `test_glossary_has_minimum_entries` — glossary has ≥ 10 rows.
 - `test_runtime_dirs_exist` — `04-exam-runner/`, `05-learning-data/attempts/`, `06-dashboard/data/`, `06-dashboard/static/`, `02-question-bank/seed/` exist.
-- `test_pyproject_declares_cca_f_study_package` — parses `pyproject.toml` and asserts `cca_f_study` package presence.
+- `test_pyproject_declares_cca_f_study_package` — parses `pyproject.toml` and asserts `cca_f_study` package presence + `pythonpath = ["src"]`.
 
 ### 1.4 Implementation steps
 1. Run failing tests (red).
 2. Create directory tree with `mkdir -p`.
 3. Author the markdown files per §1.2.
 4. Author minimal `pyproject.toml`.
-5. Move/copy the PDF.
+5. Move the PDF (if present); otherwise leave `source-register.md` with the pending placeholder.
 6. Re-run tests (green).
 
 ### 1.5 Validation command
 ```bash
-pytest tests/test_repo_skeleton.py -q
+pytest -q
 ```
 
 ### 1.6 Expected output
-- All Phase-1 tests pass, exit 0.
-- `tree -L 2` (or `ls`) shows the structure in §1.
+- All Phase-1 smoke tests pass, exit 0.
+- `ls 00-meta/` shows the four metadata files.
 
 ### 1.7 Rollback / safety
 - Never delete `01-sources/en/guide_en.pdf` to "regenerate" it. If the move is wrong, restore from git or original location; do not re-encode.
-- The curated copy at `02-notebooklm-upload/guide_en.pdf` may be regenerated by re-copying from `01-sources/en/guide_en.pdf`.
+- The Markdown companion under `01-sources/en/companion/` is *not* the runtime source; do not rely on it for validation.
 - All edits are local; rollback = `git checkout -- <path>`.
 
 ### 1.8 Completion criteria
-- Phase-1 tests green.
-- `02-notebooklm-upload/` contains exactly the six items listed (one PDF + five markdown files).
-- `01-sources/en/guide_en.pdf` sha256 matches the value recorded in the index (when the PDF is physically present).
+- Phase-1 smoke tests green.
+- `00-meta/` contains the four required markdown files.
+- `01-sources/en/guide_en.pdf` sha256 matches the value recorded in `source-register.md` (when the PDF is physically present), or `source-register.md` carries a clearly marked `pending` placeholder otherwise.
 
 ---
 
@@ -231,7 +246,7 @@ Tests:
 ### 3.4 Implementation steps
 1. Author schemas.
 2. Run failing tests.
-3. Implement validator with `jsonschema` library + an in-process check for `source` against the index file (`02-notebooklm-upload/notebooklm-source-index.md`).
+3. Implement validator with `jsonschema` library + an in-process check for `source` against `00-meta/source-register.md` and for `scenario` against `00-meta/scenario-map.md`. Default schema discovery uses `importlib.resources` against the package-shipped copy under `src/cca_f_study/_schemas/`.
 4. Tests green.
 
 ### 3.5 Validation command
@@ -261,8 +276,8 @@ Produce a hand-authored seed JSONL with ≥ 10 questions, ≥ 1 per domain D1–
 
 ### 4.2 Files to create / modify
 - `02-question-bank/seed/sample-questions.jsonl` — ≥ 10 lines.
-- `02-notebooklm-upload/notebooklm-source-index.md` — add a `Source IDs` subsection that enumerates allowed `source` values (e.g., `guide_en`) so the validator's source check has an authoritative list.
-- `02-notebooklm-upload/scenario-map.md` — ensure every `scenario` value used in the seed bank is listed.
+- `00-meta/source-register.md` — `Source IDs` table enumerates allowed `source` values (e.g., `guide_en`) so the validator's source check has an authoritative list.
+- `00-meta/scenario-map.md` — every `scenario` value used in the seed bank must be listed there.
 
 ### 4.3 Tests to write first (`tests/test_seed_bank.py`)
 - `test_seed_bank_has_at_least_ten_questions`.
