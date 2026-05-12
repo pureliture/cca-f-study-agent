@@ -511,7 +511,7 @@ Static parsing (HTML/JS) checks; no headless browser, no JS runtime in test:
 - `test_dashboard_handles_null_latest_attempt` — JS source includes a guard string like `latest_attempt == null` or equivalent ternary; this is a coarse static smoke check.
 
 Manual checklist (documented in this plan as part of Phase 10 validation):
-- Run `python -m http.server 8000 -d 06-dashboard/static` and browse `http://localhost:8000/`.
+- Run `python -m http.server 8000 -d 06-dashboard` and browse `http://localhost:8000/`.
 - Confirm each of the seven widgets renders against the sample `dashboard-data.json`.
 - Confirm the page renders an empty-state when `06-dashboard/data/dashboard-data.json` has zero attempts.
 
@@ -524,7 +524,7 @@ Manual checklist (documented in this plan as part of Phase 10 validation):
 ### 8.5 Validation command
 ```bash
 pytest tests/test_static_dashboard.py -q
-python -m http.server 8000 -d 06-dashboard/static
+python -m http.server 8000 -d 06-dashboard
 ```
 
 ### 8.6 Expected output
@@ -616,7 +616,7 @@ python 04-exam-runner/export_dashboard_data.py \
   --lab-status 05-learning-data/lab-status.json \
   --out 06-dashboard/data/dashboard-data.json
 
-python -m http.server 8000 -d 06-dashboard/static
+python -m http.server 8000 -d 06-dashboard
 ```
 
 ### 10.6 Expected output per command
@@ -628,7 +628,7 @@ python -m http.server 8000 -d 06-dashboard/static
 | 3 | `submit_attempt.py …` | Creates `05-learning-data/attempts/sample-attempt.json` matching `attempt_schema.json`; no overwrite without `--force`. |
 | 4 | `score_attempt.py …sample-attempt.json` | Prints `Raw score`, `Scaled score`, `Pass mark: 720`, `Result: PASS\|FAIL`, `Gap: <signed>`, plus a `Domain breakdown` block. |
 | 5 | `export_dashboard_data.py …` | Writes `06-dashboard/data/dashboard-data.json` matching spec §8.1; repeat run is byte-identical. |
-| 6 | `python -m http.server 8000 -d 06-dashboard/static` | Server starts; browser at `http://localhost:8000/` shows all seven widgets. |
+| 6 | `python -m http.server 8000 -d 06-dashboard` | Server starts; browser at `http://localhost:8000/` shows all seven widgets. |
 
 ### 10.7 Rollback / safety
 - `python -m http.server` is read-only by default; stop with Ctrl-C.
@@ -673,7 +673,7 @@ python 04-exam-runner/export_dashboard_data.py \
   --lab-status 05-learning-data/lab-status.json \
   --out 06-dashboard/data/dashboard-data.json
 
-python -m http.server 8000 -d 06-dashboard/static
+python -m http.server 8000 -d 06-dashboard
 ```
 
 ## Appendix B — Forbidden in MVP (re-cap)

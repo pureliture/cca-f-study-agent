@@ -481,11 +481,13 @@ pytest
 
 ### 10.6 Open the dashboard
 
+The dashboard's `app.js` fetches `../data/dashboard-data.json` (one level up from `06-dashboard/static/`), so the document root for the local server must be `06-dashboard/` — **not** `06-dashboard/static/`. Serving from `static/` would 404 the relative fetch because the URL `..` is normalized inside the document root.
+
 ```bash
-python -m http.server 8000 -d 06-dashboard/static
+python -m http.server 8000 -d 06-dashboard
 ```
 
-Then open `http://localhost:8000/` in a browser.
+Then open `http://localhost:8000/static/` in a browser. The page will fetch `/data/dashboard-data.json` from the same origin.
 
 ---
 

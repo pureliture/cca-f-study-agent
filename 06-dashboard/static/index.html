@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CCA-F Study Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar" role="banner">
+    <div class="topbar__brand">
+      <span class="brand__mark" aria-hidden="true">/_/</span>
+      <span class="brand__name">CCA-F Study Runtime</span>
+    </div>
+    <dl class="topbar__meta" aria-label="dashboard metadata">
+      <div class="meta-item">
+        <dt>pass mark</dt>
+        <dd id="meta-pass-mark">720</dd>
+      </div>
+      <div class="meta-item">
+        <dt>generated</dt>
+        <dd id="meta-generated-at">&mdash;</dd>
+      </div>
+      <div class="meta-item meta-item--muted">
+        <dt>attempt</dt>
+        <dd id="meta-attempt-id">&mdash;</dd>
+      </div>
+    </dl>
+  </header>
+
+  <main class="grid" id="dashboard-root">
+    <section id="pass-banner" class="card card--banner banner banner--unknown" aria-label="pass status">
+      <div class="banner__body">
+        <p class="banner__verdict">&mdash;</p>
+        <p class="banner__score"><span class="banner__score-num">&mdash;</span><span class="banner__score-unit">scaled</span></p>
+        <p class="banner__gap">&mdash;</p>
+      </div>
+    </section>
+
+    <section id="pass-progress" class="card card--progress" aria-label="progress toward 720">
+      <header class="card__head">
+        <h2>Progress to 720</h2>
+        <span class="card__hint">scaled_score / pass_mark</span>
+      </header>
+      <div class="progress">
+        <div class="progress__track">
+          <div class="progress__fill" style="width:0%"></div>
+          <div class="progress__threshold" style="left:100%" aria-hidden="true"></div>
+        </div>
+        <div class="progress__labels">
+          <span class="progress__current">0</span>
+          <span class="progress__target">720</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="score-trend" class="card card--trend" aria-label="score trend over time">
+      <header class="card__head">
+        <h2>Score trend</h2>
+        <span class="card__hint">scaled_score per attempt</span>
+      </header>
+      <div class="trend">
+        <p class="empty empty--hidden">no attempts yet</p>
+      </div>
+    </section>
+
+    <section id="domain-breakdown" class="card card--domains" aria-label="domain breakdown">
+      <header class="card__head">
+        <h2>Domain breakdown</h2>
+        <span class="card__hint">D1 &ndash; D5 accuracy</span>
+      </header>
+      <ul class="bars"></ul>
+    </section>
+
+    <section id="scenario-breakdown" class="card card--scenarios" aria-label="scenario breakdown">
+      <header class="card__head">
+        <h2>Scenario breakdown</h2>
+        <span class="card__hint">per-scenario accuracy</span>
+      </header>
+      <ul class="bars bars--scenario"></ul>
+    </section>
+
+    <section id="weak-concepts" class="card card--weak" aria-label="weak concepts">
+      <header class="card__head">
+        <h2>Weak concepts</h2>
+        <span class="card__hint">highest miss-rate first</span>
+      </header>
+      <ul class="weak"></ul>
+    </section>
+
+    <section id="lab-progress" class="card card--labs" aria-label="lab progress">
+      <header class="card__head">
+        <h2>Lab progress</h2>
+        <span class="card__hint">completed &middot; in&nbsp;progress &middot; not&nbsp;started</span>
+      </header>
+      <div class="labs__counts">
+        <div class="lab-pill lab-pill--done"><span class="lab-pill__num" data-key="completed">0</span><span class="lab-pill__lbl">done</span></div>
+        <div class="lab-pill lab-pill--wip"><span class="lab-pill__num" data-key="in_progress">0</span><span class="lab-pill__lbl">in progress</span></div>
+        <div class="lab-pill lab-pill--todo"><span class="lab-pill__num" data-key="not_started">0</span><span class="lab-pill__lbl">not started</span></div>
+        <div class="lab-pill lab-pill--total"><span class="lab-pill__num" data-key="total_labs">0</span><span class="lab-pill__lbl">total</span></div>
+      </div>
+      <div class="labs__recommended">
+        <h3 class="labs__subhead">Recommended next</h3>
+        <ul class="labs__list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footnote" role="contentinfo">
+    <p>Static dashboard &middot; offline-only &middot; vanilla HTML/CSS/JS</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
