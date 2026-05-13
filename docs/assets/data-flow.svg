@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" role="img" aria-labelledby="dataflow-title dataflow-desc">
+  <title id="dataflow-title">CCA-F Study Runtime Data-Flow Diagram</title>
+  <desc id="dataflow-desc">Artifact chain showing how data moves through the CCA-F study runtime: sample-questions.jsonl is validated, joined with sample-answers.json to produce sample-attempt.json, which is scored and then merged with lab-status.json by the export stage to produce dashboard-data.json, which the static HTML dashboard renders as seven widgets.</desc>
+
+  <defs>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2D6A4F"/>
+    </marker>
+    <marker id="arr-rust" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#C9622F"/>
+    </marker>
+    <marker id="arr-ink" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#1C2B2B"/>
+    </marker>
+    <marker id="arr-sage" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8BA888"/>
+    </marker>
+    <style>
+      .file-label  { font-family:'Courier New','Courier',monospace; font-size:9px; fill:#1C2B2B; }
+      .op-label    { font-family:'Georgia','Times New Roman',serif; font-size:10px; font-style:italic; fill:#555; }
+      .section-hd  { font-family:'Georgia','Times New Roman',serif; font-size:10px; font-weight:bold; fill:#1C2B2B; }
+      .ext-badge   { font-family:'Courier New','Courier',monospace; font-size:8px; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="280" fill="#F5F2EC"/>
+  <!-- Left accent rule -->
+  <rect x="0" y="0" width="4" height="280" fill="#C9622F"/>
+  <!-- Header -->
+  <rect x="4" y="0" width="896" height="40" fill="#1C2B2B"/>
+  <text x="20" y="25" font-family="'Georgia','Times New Roman',serif" font-size="14" font-weight="bold" fill="#F5F2EC">CCA-F Study Runtime · Data Flow</text>
+  <text x="760" y="25" font-family="'Courier New','Courier',monospace" font-size="10" fill="#8BA888">artifacts → pipeline</text>
+
+  <!-- ══ LANE BACKGROUNDS ══ -->
+  <!-- Row 1: main pipeline (y=85 center) -->
+  <!-- Row 2: side input lab-status (y=185 center) -->
+
+  <!-- ══════ FILE GLYPH HELPER: document shape ══════
+       Each "file" is a rect with a folded corner polygon.
+       x0,y0 = top-left of file box, w=90, h=52 -->
+
+  <!-- FILE 1: sample-questions.jsonl -->
+  <g transform="translate(20,59)">
+    <rect width="110" height="52" rx="2" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+    <rect x="0" y="0" width="110" height="18" rx="2" fill="#8BA888"/>
+    <rect x="0" y="9"  width="110" height="9"  fill="#8BA888"/><!-- flatten bottom -->
+    <text x="55" y="13" text-anchor="middle" class="ext-badge" fill="#F5F2EC">.jsonl</text>
+    <text x="55" y="32" text-anchor="middle" class="file-label">sample-questions</text>
+    <text x="55" y="44" text-anchor="middle" class="file-label" font-size="8">(seed question bank)</text>
+  </g>
+
+  <!-- Arrow: validate -->
+  <line x1="132" y1="85" x2="162" y2="85" stroke="#2D6A4F" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <!-- Op label below arrow -->
+  <text x="147" y="104" text-anchor="middle" class="op-label">validate</text>
+
+  <!-- FILE 2: sample-answers.json -->
+  <g transform="translate(165,59)">
+    <rect width="105" height="52" rx="2" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+    <rect x="0" y="0" width="105" height="18" rx="2" fill="#8BA888"/>
+    <rect x="0" y="9"  width="105" height="9"  fill="#8BA888"/>
+    <text x="52" y="13" text-anchor="middle" class="ext-badge" fill="#F5F2EC">.json</text>
+    <text x="52" y="32" text-anchor="middle" class="file-label">sample-answers</text>
+    <text x="52" y="44" text-anchor="middle" class="file-label" font-size="8">(learner input)</text>
+  </g>
+
+  <!-- Arrow: submit -->
+  <line x1="272" y1="85" x2="302" y2="85" stroke="#2D6A4F" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text x="287" y="104" text-anchor="middle" class="op-label">submit</text>
+
+  <!-- FILE 3: sample-attempt.json -->
+  <g transform="translate(305,59)">
+    <rect width="110" height="52" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1.5"/>
+    <rect x="0" y="0" width="110" height="18" rx="2" fill="#C9622F"/>
+    <rect x="0" y="9"  width="110" height="9"  fill="#C9622F"/>
+    <text x="55" y="13" text-anchor="middle" class="ext-badge" fill="#F5F2EC">.json</text>
+    <text x="55" y="32" text-anchor="middle" class="file-label">sample-attempt</text>
+    <text x="55" y="44" text-anchor="middle" class="file-label" font-size="8">(enriched attempt)</text>
+  </g>
+
+  <!-- Arrow: score -->
+  <line x1="417" y1="85" x2="447" y2="85" stroke="#C9622F" stroke-width="1.5" marker-end="url(#arr-rust)"/>
+  <text x="432" y="104" text-anchor="middle" class="op-label">score</text>
+
+  <!-- FILE 4: scored attempt output (stdout or json flag) -->
+  <g transform="translate(450,59)">
+    <rect width="110" height="52" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1.5"/>
+    <rect x="0" y="0" width="110" height="18" rx="2" fill="#C9622F"/>
+    <rect x="0" y="9"  width="110" height="9"  fill="#C9622F"/>
+    <text x="55" y="13" text-anchor="middle" class="ext-badge" fill="#F5F2EC">stdout / --json</text>
+    <text x="55" y="32" text-anchor="middle" class="file-label">scaled score 820</text>
+    <text x="55" y="44" text-anchor="middle" class="file-label" font-size="8">PASS · gap +100</text>
+  </g>
+
+  <!-- Arrow: export (merge) -->
+  <line x1="562" y1="85" x2="592" y2="85" stroke="#1C2B2B" stroke-width="1.5" marker-end="url(#arr-ink)"/>
+  <text x="577" y="104" text-anchor="middle" class="op-label">export</text>
+
+  <!-- FILE 5: dashboard-data.json -->
+  <g transform="translate(595,59)">
+    <rect width="120" height="52" rx="2" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+    <rect x="0" y="0" width="120" height="18" rx="2" fill="#1C2B2B"/>
+    <rect x="0" y="9"  width="120" height="9"  fill="#1C2B2B"/>
+    <text x="60" y="13" text-anchor="middle" class="ext-badge" fill="#F5F2EC">.json</text>
+    <text x="60" y="32" text-anchor="middle" class="file-label">dashboard-data</text>
+    <text x="60" y="44" text-anchor="middle" class="file-label" font-size="8">(aggregate output)</text>
+  </g>
+
+  <!-- Arrow: render -->
+  <line x1="717" y1="85" x2="747" y2="85" stroke="#2D6A4F" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text x="732" y="104" text-anchor="middle" class="op-label">render</text>
+
+  <!-- FILE 6: 7-widget HTML dashboard -->
+  <g transform="translate(750,53)">
+    <rect width="130" height="64" rx="3" fill="#2D6A4F" stroke="#1C2B2B" stroke-width="1.5"/>
+    <text x="65" y="18" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="11" font-weight="bold" fill="#F5F2EC">Dashboard</text>
+    <text x="65" y="33" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#8BA888">7 widgets</text>
+    <text x="65" y="46" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#8BA888">vanilla HTML/CSS/JS</text>
+    <text x="65" y="58" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#F5F2EC">localhost:8000/static/</text>
+  </g>
+
+  <!-- ══ SIDE INPUT: lab-status.json feeds into export ══ -->
+  <!-- lab-status box at y~160 centered under arrow between FILE4 and FILE5 -->
+  <g transform="translate(450,150)">
+    <rect width="110" height="48" rx="2" fill="#F5F2EC" stroke="#8BA888" stroke-width="1.5"/>
+    <rect x="0" y="0" width="110" height="16" rx="2" fill="#8BA888"/>
+    <rect x="0" y="8"  width="110" height="8"  fill="#8BA888"/>
+    <text x="55" y="12" text-anchor="middle" class="ext-badge" fill="#F5F2EC">.json</text>
+    <text x="55" y="28" text-anchor="middle" class="file-label">lab-status</text>
+    <text x="55" y="40" text-anchor="middle" class="file-label" font-size="8">(lab completion)</text>
+  </g>
+  <!-- Upward arrow from lab-status to export arrow midpoint -->
+  <line x1="505" y1="150" x2="505" y2="113" stroke="#8BA888" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-sage)"/>
+  <text x="520" y="136" class="op-label" font-size="9">merged by export</text>
+
+  <!-- ══ LEGEND ══ -->
+  <rect x="20" y="210" width="860" height="55" rx="3" fill="none" stroke="#1C2B2B" stroke-width="0.75" opacity="0.3"/>
+  <text x="36" y="228" class="section-hd">Legend</text>
+  <line x1="36" y1="233" x2="100" y2="233" stroke="#1C2B2B" stroke-width="0.5" opacity="0.35"/>
+
+  <!-- legend items -->
+  <line x1="36"  y1="248" x2="70"  y2="248" stroke="#2D6A4F" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text x="76"  y="252" class="file-label">validation / submission flow</text>
+
+  <line x1="220" y1="248" x2="254" y2="248" stroke="#C9622F" stroke-width="1.5" marker-end="url(#arr-rust)"/>
+  <text x="260" y="252" class="file-label">scoring flow</text>
+
+  <line x1="360" y1="248" x2="394" y2="248" stroke="#1C2B2B" stroke-width="1.5" marker-end="url(#arr-ink)"/>
+  <text x="400" y="252" class="file-label">export / aggregation flow</text>
+
+  <line x1="560" y1="248" x2="594" y2="248" stroke="#8BA888" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-sage)"/>
+  <text x="600" y="252" class="file-label">side-input (lab status)</text>
+
+  <text x="36" y="260" font-family="'Georgia','Times New Roman',serif" font-size="9" font-style="italic" fill="#555">All artifacts are local JSON/JSONL files. No external API calls at any stage.</text>
+</svg>

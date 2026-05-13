@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CCA-F Study Runtime — a dependency-light local toolkit for the Claude Certified Architect Foundations exam. Validates questions, scores attempts, exports dashboard data, and serves a seven-widget static dashboard with no PDF parsing, no network calls, and no API keys.">
+  <title>CCA-F Study Runtime — Project Overview</title>
+  <style>
+    /* ── Design tokens ── */
+    :root {
+      --parchment: #F5F2EC;
+      --ink:       #1C2B2B;
+      --forest:    #2D6A4F;
+      --rust:      #C9622F;
+      --sage:      #8BA888;
+      --mid:       #E8E4DC;
+      --gap-xs:    8px;
+      --gap-s:     16px;
+      --gap-m:     32px;
+      --gap-l:     56px;
+      --radius:    3px;
+      --mono:      'Courier New', 'Courier', monospace;
+      --serif:     'Georgia', 'Times New Roman', serif;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    /* ── Accent rule ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 4px; height: 100vh;
+      background: var(--rust);
+      z-index: 100;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 var(--gap-m) var(--gap-l);
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--ink);
+      color: var(--parchment);
+      padding: var(--gap-m) var(--gap-m) var(--gap-m) calc(var(--gap-m) + 4px);
+      margin-bottom: var(--gap-l);
+    }
+
+    header .inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--sage);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--gap-xs);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: bold;
+      line-height: 1.2;
+      margin-bottom: var(--gap-s);
+    }
+
+    header h1 span { color: var(--rust); }
+
+    header p {
+      font-size: 1rem;
+      color: #A8B8B4;
+      max-width: 640px;
+    }
+
+    /* ── Status row ── */
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gap-xs);
+      margin-top: var(--gap-s);
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 2px;
+      border: 1px solid;
+    }
+
+    .badge-green  { background: rgba(45,106,79,0.1);  border-color: var(--forest); color: var(--forest); }
+    .badge-rust   { background: rgba(201,98,47,0.1);  border-color: var(--rust);   color: var(--rust);   }
+    .badge-ink    { background: rgba(28,43,43,0.08);  border-color: var(--ink);    color: var(--ink);    }
+    .badge-sage   { background: rgba(138,168,136,0.15); border-color: var(--sage); color: #3D5C3B;       }
+
+    /* ── Section headings ── */
+    section { margin-bottom: var(--gap-l); }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: var(--gap-s);
+      margin-bottom: var(--gap-m);
+      padding-bottom: var(--gap-xs);
+      border-bottom: 1px solid rgba(28,43,43,0.15);
+    }
+
+    .section-header h2 {
+      font-size: 1.35rem;
+      font-weight: bold;
+    }
+
+    .section-header .rule-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--rust);
+    }
+
+    /* ── SVG frames ── */
+    .svg-frame {
+      border: 1.5px solid rgba(28,43,43,0.2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: var(--gap-s);
+      background: var(--parchment);
+    }
+
+    .svg-frame img,
+    .svg-frame object {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .svg-caption {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--sage);
+      padding: var(--gap-xs) var(--gap-s);
+      border-top: 1px solid rgba(28,43,43,0.1);
+      background: var(--mid);
+    }
+
+    /* ── Prose ── */
+    p { margin-bottom: var(--gap-s); }
+
+    /* ── Command block ── */
+    .cmd-block {
+      background: var(--ink);
+      border-radius: var(--radius);
+      padding: var(--gap-s) var(--gap-m);
+      margin: var(--gap-s) 0;
+      overflow-x: auto;
+    }
+
+    .cmd-block pre {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--parchment);
+      white-space: pre;
+    }
+
+    .cmd-block .comment { color: var(--sage); }
+    .cmd-block .cmd     { color: #E8D8C4; }
+    .cmd-block .flag    { color: var(--rust); }
+    .cmd-block .path    { color: var(--forest); }
+    .cmd-block .url     { color: #8BD4C0; }
+
+    /* ── Fact grid ── */
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--gap-s);
+      margin: var(--gap-s) 0;
+    }
+
+    .fact-card {
+      border: 1px solid rgba(28,43,43,0.2);
+      border-radius: var(--radius);
+      padding: var(--gap-s);
+      border-left: 3px solid var(--forest);
+    }
+
+    .fact-card .fact-val {
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--forest);
+      display: block;
+    }
+
+    .fact-card .fact-rust { color: var(--rust); }
+
+    .fact-card .fact-lbl {
+      font-size: 0.85rem;
+      color: #555;
+      font-style: italic;
+    }
+
+    /* ── Boundary list ── */
+    .boundary-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-xs) var(--gap-s);
+    }
+
+    .boundary-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--gap-xs);
+      font-size: 0.93rem;
+    }
+
+    .boundary-list li::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      background: var(--forest);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .boundary-list li.off::before { background: var(--rust); }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: var(--gap-s) 0;
+    }
+
+    th {
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: var(--mono);
+      font-size: 11px;
+      text-align: left;
+      padding: 8px 12px;
+      font-weight: normal;
+    }
+
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(28,43,43,0.1);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    tr:nth-child(even) td { background: var(--mid); }
+
+    td.path-cell { color: var(--forest); }
+    td.prod-cell { color: var(--rust);   font-style: italic; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--ink);
+      color: var(--sage);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: var(--gap-m) calc(var(--gap-m) + 4px);
+      margin-top: var(--gap-l);
+    }
+
+    footer .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--gap-s);
+    }
+
+    footer a { color: var(--sage); text-decoration: none; border-bottom: 1px dotted var(--sage); }
+    footer a:hover { color: var(--parchment); }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(245,242,236,0.95);
+      border-bottom: 1px solid rgba(28,43,43,0.15);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      padding: var(--gap-xs) calc(var(--gap-m) + 4px);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: var(--gap-m);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    nav a {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    nav a:hover { color: var(--rust); }
+
+    @media (max-width: 640px) {
+      .boundary-list { grid-template-columns: 1fr; }
+      nav ul { gap: var(--gap-s); flex-wrap: wrap; }
+      header h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="eyebrow">CCA-F Study Runtime · Project Overview · 2026-05-13</div>
+    <h1>Claude Certified Architect<br><span>Foundations</span> Study Runtime</h1>
+    <p>A dependency-light, fully local Python toolkit that validates a question bank, scores mock-exam attempts against the 720 pass mark, and serves a seven-widget static dashboard — with no PDF parsing, no network calls, and no API keys required.</p>
+    <div class="status-row">
+      <span class="badge badge-green">10 / 10 phases</span>
+      <span class="badge badge-green">7 / 7 goals</span>
+      <span class="badge badge-rust">14 / 14 CC PASS</span>
+      <span class="badge badge-ink">130 tests · 0 failures</span>
+      <span class="badge badge-sage">seed: 820 PASS · +100</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#quickstart">Quick start</a></li>
+    <li><a href="#dataflow">Data flow</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#status">Status</a></li>
+    <li><a href="#boundary">Boundary</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- ── KEY FACTS ── -->
+  <section style="margin-top:var(--gap-l)">
+    <div class="fact-grid">
+      <div class="fact-card">
+        <span class="fact-val">820</span>
+        <span class="fact-lbl">Seed attempt scaled score (pass mark 720, gap +100)</span>
+      </div>
+      <div class="fact-card">
+        <span class="fact-val">130</span>
+        <span class="fact-lbl">pytest cases passing (1 intentional skip)</span>
+      </div>
+      <div class="fact-card">
+        <span class="fact-val">5</span>
+        <span class="fact-lbl">Runtime modules (validate, submit, score, export, dashboard)</span>
+      </div>
+      <div class="fact-card">
+        <span class="fact-val fact-rust">0</span>
+        <span class="fact-lbl">External network calls or API keys required</span>
+      </div>
+      <div class="fact-card">
+        <span class="fact-val">7</span>
+        <span class="fact-lbl">Dashboard widgets in vanilla HTML/CSS/JS</span>
+      </div>
+      <div class="fact-card">
+        <span class="fact-val">10 / 10</span>
+        <span class="fact-lbl">Plan phases complete as of 2026-05-13</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PIPELINE ── -->
+  <section id="pipeline">
+    <div class="section-header">
+      <h2>Runtime pipeline</h2>
+      <span class="rule-num">01</span>
+    </div>
+    <p>Five sequential stages drive the runtime. Each stage is a single Python command; there is no daemon, no scheduler, and no build step. The pipeline is designed so every stage can be re-run independently.</p>
+    <div class="svg-frame">
+      <img src="assets/pipeline.svg" alt="Five-stage runtime pipeline diagram: validate questions, submit attempt, score attempt, export dashboard data, render static dashboard — with CLI commands and produced artifacts labelled for each stage.">
+      <div class="svg-caption">pipeline.svg · five stages · no external dependencies</div>
+    </div>
+  </section>
+
+  <!-- ── QUICK START ── -->
+  <section id="quickstart">
+    <div class="section-header">
+      <h2>Quick start</h2>
+      <span class="rule-num">02</span>
+    </div>
+    <p>Install the package in editable mode (<code style="font-family:var(--mono);font-size:0.9em">pip install -e ".[dev]"</code>), then run the six commands below in order on first setup:</p>
+    <div class="cmd-block">
+      <pre><span class="comment"># 1. Validate the seed question bank</span>
+<span class="cmd">python -m cca_f_study.validate_questions</span> <span class="path">02-question-bank/seed/sample-questions.jsonl</span>
+
+<span class="comment"># 2. Submit a mock-exam attempt</span>
+<span class="cmd">python 04-exam-runner/submit_attempt.py</span> <span class="flag">\
+  --questions</span> <span class="path">02-question-bank/seed/sample-questions.jsonl</span> <span class="flag">\
+  --answers</span>   <span class="path">examples/attempts/sample-answers.json</span> <span class="flag">\
+  --out</span>       <span class="path">05-learning-data/attempts/sample-attempt.json</span>
+
+<span class="comment"># 3. Score the attempt</span>
+<span class="cmd">python 04-exam-runner/score_attempt.py</span> <span class="path">05-learning-data/attempts/sample-attempt.json</span>
+
+<span class="comment"># 4. Export dashboard data</span>
+<span class="cmd">python 04-exam-runner/export_dashboard_data.py</span> <span class="flag">\
+  --attempts</span>   <span class="path">05-learning-data/attempts</span> <span class="flag">\
+  --lab-status</span> <span class="path">05-learning-data/lab-status.json</span> <span class="flag">\
+  --out</span>        <span class="path">06-dashboard/data/dashboard-data.json</span> <span class="flag">\
+  --now</span>        2026-05-12T00:30:00Z
+
+<span class="comment"># 5. Serve the static dashboard</span>
+<span class="cmd">python -m http.server</span> 8000 <span class="flag">-d</span> <span class="path">06-dashboard</span>
+<span class="comment"># then open</span> <span class="url">http://localhost:8000/static/</span>
+
+<span class="comment"># 6. Run the full test suite</span>
+<span class="cmd">pytest</span></pre>
+    </div>
+  </section>
+
+  <!-- ── DATA FLOW ── -->
+  <section id="dataflow">
+    <div class="section-header">
+      <h2>Data flow</h2>
+      <span class="rule-num">03</span>
+    </div>
+    <p>All runtime state lives in plain JSON or JSONL files. The diagram below shows how each artifact is produced and consumed. Re-running any command with the same inputs produces byte-identical output.</p>
+    <div class="svg-frame">
+      <img src="assets/data-flow.svg" alt="Artifact chain showing sample-questions.jsonl being validated, joined with sample-answers.json by submit_attempt to create sample-attempt.json, scored by score_attempt, then aggregated with lab-status.json by export_dashboard_data to produce dashboard-data.json, which the static dashboard renders.">
+      <div class="svg-caption">data-flow.svg · all artifacts are local files · byte-identical regeneration</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Artifact</th>
+          <th>Produced by</th>
+          <th>Consumed by</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="path-cell">02-question-bank/seed/sample-questions.jsonl</td>
+          <td>hand-authored</td>
+          <td class="prod-cell">validate_questions, submit_attempt</td>
+        </tr>
+        <tr>
+          <td class="path-cell">examples/attempts/sample-answers.json</td>
+          <td>learner input</td>
+          <td class="prod-cell">submit_attempt</td>
+        </tr>
+        <tr>
+          <td class="path-cell">05-learning-data/attempts/sample-attempt.json</td>
+          <td>submit_attempt</td>
+          <td class="prod-cell">score_attempt, export_dashboard_data</td>
+        </tr>
+        <tr>
+          <td class="path-cell">05-learning-data/lab-status.json</td>
+          <td>hand-authored</td>
+          <td class="prod-cell">export_dashboard_data</td>
+        </tr>
+        <tr>
+          <td class="path-cell">06-dashboard/data/dashboard-data.json</td>
+          <td>export_dashboard_data</td>
+          <td class="prod-cell">static dashboard (fetch)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── DASHBOARD ── -->
+  <section id="dashboard">
+    <div class="section-header">
+      <h2>Dashboard — seven widgets</h2>
+      <span class="rule-num">04</span>
+    </div>
+    <p>The static dashboard is a single HTML page that fetches <code style="font-family:var(--mono);font-size:0.9em">dashboard-data.json</code> and renders seven widgets answering the seven most important study questions. No build step, no CDN, no framework — just vanilla HTML, CSS, and JavaScript.</p>
+    <div class="svg-frame">
+      <img src="assets/dashboard-wireframe.svg" alt="Schematic wireframe of the seven-widget dashboard: pass/fail banner with scaled score and gap, 720 progress bar, domain breakdown bars for D1–D5, scenario breakdown, weak concept tag cloud, lab progress with recommended-next lab, and score trend sparkline across attempts.">
+      <div class="svg-caption">dashboard-wireframe.svg · serve with: python -m http.server 8000 -d 06-dashboard · open http://localhost:8000/static/</div>
+    </div>
+    <p>Widget anchors: <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#pass-banner</code> · <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#pass-progress</code> · <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#domain-breakdown</code> · <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#scenario-breakdown</code> · <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#weak-concepts</code> · <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#lab-progress</code> · <code style="font-family:var(--mono);font-size:0.85em;color:var(--rust)">#score-trend</code></p>
+  </section>
+
+  <!-- ── STATUS ── -->
+  <section id="status">
+    <div class="section-header">
+      <h2>MVP completion status</h2>
+      <span class="rule-num">05</span>
+    </div>
+    <p>All ten plan phases, seven spec goals, and fourteen completion criteria are complete. The matrix below shows the full evidence record.</p>
+    <div class="svg-frame">
+      <img src="assets/status-matrix.svg" alt="Completion matrix grid with all 10 phases, 7 goals, and 14 completion criteria marked complete with green tick marks, and a footer showing MVP PASS, 130 tests passing, seed score 820, dated 2026-05-13.">
+      <div class="svg-caption">status-matrix.svg · commit 418c1f1 · 2026-05-13</div>
+    </div>
+  </section>
+
+  <!-- ── BOUNDARY ── -->
+  <section id="boundary">
+    <div class="section-header">
+      <h2>Safety and boundaries</h2>
+      <span class="rule-num">06</span>
+    </div>
+    <p>The MVP boundary is intentionally tight. These rules are enforced by regression tests and will not be relaxed without a new spec revision:</p>
+    <ul class="boundary-list">
+      <li>No PDF parsing at runtime — the source guide is read-only evidence</li>
+      <li>No HTTP requests at any stage — verified by test_no_network_calls.py</li>
+      <li>No API keys or secrets required</li>
+      <li>Generated questions carry <code style="font-family:var(--mono)">status != "official"</code> always</li>
+      <li>Dashboard is static HTML/CSS/JS — no build step, no CDN</li>
+      <li>Dashboard-data export is byte-identical across re-runs</li>
+      <li class="off">Out of scope: adaptive question generation via Claude API</li>
+      <li class="off">Out of scope: multi-user or remote deployment</li>
+      <li class="off">Out of scope: CI/CD pipeline (all checks are local pytest)</li>
+      <li class="off">Out of scope: persistent database (all data is JSON/JSONL)</li>
+    </ul>
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  <div class="inner">
+    <div>
+      <strong style="color:var(--parchment)">CCA-F Study Runtime</strong><br>
+      MVP complete · 2026-05-13 · commit 418c1f1
+    </div>
+    <div>
+      <a href="../README.md">README</a> ·
+      <a href="specs/2026-05-cca-f-study-runtime-mvp.md">Spec</a> ·
+      <a href="plans/2026-05-cca-f-study-runtime-mvp-plan.md">Plan</a> ·
+      <a href="reviews/2026-05-cca-f-study-runtime-mvp-final-validation.md">Validation report</a>
+    </div>
+    <div>
+      No network · No PDF parsing · No secrets<br>
+      Serve: <code>python -m http.server 8000 -d docs</code>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

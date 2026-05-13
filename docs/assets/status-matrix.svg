@@ -1,0 +1,315 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-labelledby="matrix-title matrix-desc">
+  <title id="matrix-title">CCA-F Study Runtime MVP — Completion Status Matrix</title>
+  <desc id="matrix-desc">Completion matrix showing all ten phases complete, all seven spec goals met, and all fourteen completion criteria passing. Footer shows the overall result: MVP PASS, 130 tests green, dated 2026-05-13.</desc>
+
+  <defs>
+    <style>
+      .cat-hd    { font-family:'Georgia','Times New Roman',serif; font-size:11px; font-weight:bold; fill:#F5F2EC; }
+      .cell-lbl  { font-family:'Georgia','Times New Roman',serif; font-size:9.5px; fill:#1C2B2B; }
+      .cell-id   { font-family:'Courier New','Courier',monospace; font-size:8px; fill:#8BA888; }
+      .tick-path { fill:none; stroke:#2D6A4F; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+      .col-hd    { font-family:'Courier New','Courier',monospace; font-size:9px; fill:#1C2B2B; }
+      .footer-t  { font-family:'Georgia','Times New Roman',serif; font-size:11px; font-weight:bold; fill:#2D6A4F; }
+      .footer-s  { font-family:'Courier New','Courier',monospace; font-size:9px; fill:#555; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="420" fill="#F5F2EC"/>
+  <!-- Left accent rule -->
+  <rect x="0" y="0" width="4" height="420" fill="#C9622F"/>
+  <!-- Header -->
+  <rect x="4" y="0" width="896" height="40" fill="#1C2B2B"/>
+  <text x="20" y="25" font-family="'Georgia','Times New Roman',serif" font-size="14" font-weight="bold" fill="#F5F2EC">CCA-F Study Runtime · MVP Completion Matrix</text>
+  <text x="760" y="25" font-family="'Courier New','Courier',monospace" font-size="10" fill="#8BA888">10 ph · 7 goals · 14 CC</text>
+
+  <!-- ══════════════════ SECTION 1: PHASES (10 cells) ══════════════════ -->
+  <rect x="20" y="50" width="860" height="22" rx="3" fill="#1C2B2B"/>
+  <text x="36" y="65" class="cat-hd">Phases (10 / 10 complete)</text>
+
+  <!-- Phase cells: 5 per row, each 84×40 -->
+  <!-- Row A (phases 1–5) -->
+  <!-- Phase offsets: col = 20 + i*172 for i in 0..4, y=76 -->
+
+  <!-- P1 -->
+  <rect x="20"  y="76" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="20"  y="76" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="34"  y="90"  class="cell-lbl">Phase 1</text>
+  <text x="34"  y="103" class="cell-id">Repo skeleton + rules</text>
+  <!-- tick glyph -->
+  <g transform="translate(170,82)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P2 -->
+  <rect x="196" y="76" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="196" y="76" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="210" y="90"  class="cell-lbl">Phase 2</text>
+  <text x="210" y="103" class="cell-id">Python pkg bootstrap</text>
+  <g transform="translate(346,82)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P3 -->
+  <rect x="372" y="76" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="372" y="76" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="386" y="90"  class="cell-lbl">Phase 3</text>
+  <text x="386" y="103" class="cell-id">JSON schemas</text>
+  <g transform="translate(522,82)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P4 -->
+  <rect x="548" y="76" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="548" y="76" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="562" y="90"  class="cell-lbl">Phase 4</text>
+  <text x="562" y="103" class="cell-id">Question bank + validator</text>
+  <g transform="translate(698,82)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P5 -->
+  <rect x="724" y="76" width="156" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="724" y="76" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="738" y="90"  class="cell-lbl">Phase 5</text>
+  <text x="738" y="103" class="cell-id">Attempt submission</text>
+  <g transform="translate(864,82)">
+    <rect width="16" height="18" rx="8" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M3 9 L6 13 L13 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- Row B (phases 6–10) -->
+  <!-- P6 -->
+  <rect x="20"  y="120" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="20"  y="120" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="34"  y="134" class="cell-lbl">Phase 6</text>
+  <text x="34"  y="147" class="cell-id">Attempt scoring</text>
+  <g transform="translate(170,126)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P7 -->
+  <rect x="196" y="120" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="196" y="120" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="210" y="134" class="cell-lbl">Phase 7</text>
+  <text x="210" y="147" class="cell-id">Dashboard data export</text>
+  <g transform="translate(346,126)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P8 -->
+  <rect x="372" y="120" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="372" y="120" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="386" y="134" class="cell-lbl">Phase 8</text>
+  <text x="386" y="147" class="cell-id">Static dashboard</text>
+  <g transform="translate(522,126)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P9 -->
+  <rect x="548" y="120" width="168" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="548" y="120" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="562" y="134" class="cell-lbl">Phase 9</text>
+  <text x="562" y="147" class="cell-id">Cross-cutting rules + regression</text>
+  <g transform="translate(698,126)">
+    <rect width="18" height="18" rx="9" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M4 9 L7 13 L14 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- P10 -->
+  <rect x="724" y="120" width="156" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="724" y="120" width="4"   height="38" fill="#2D6A4F"/>
+  <text x="738" y="134" class="cell-lbl">Phase 10</text>
+  <text x="738" y="147" class="cell-id">Final validation</text>
+  <g transform="translate(864,126)">
+    <rect width="16" height="18" rx="8" fill="#2D6A4F" opacity="0.15"/>
+    <path d="M3 9 L6 13 L13 5" class="tick-path" stroke="#2D6A4F"/>
+  </g>
+
+  <!-- ══════════════════ SECTION 2: SPEC GOALS (7 cells) ══════════════════ -->
+  <rect x="20" y="170" width="860" height="22" rx="3" fill="#2D6A4F" opacity="0.75"/>
+  <text x="36" y="185" class="cat-hd">Spec Goals G1–G7 (7 / 7 complete)</text>
+
+  <!-- Goal cells: 7, each ~120 wide, single row -->
+  <!-- col positions: 20, 146, 272, 398, 524, 650, 776  width=120,120,120,120,120,120,104 -->
+
+  <!-- G1 -->
+  <rect x="20"  y="196" width="120" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="20"  y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="32"  y="210" class="cell-id">G1</text>
+  <text x="32"  y="222" class="cell-lbl">Validate Qs</text>
+  <g transform="translate(122,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- G2 -->
+  <rect x="146" y="196" width="120" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="146" y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="158" y="210" class="cell-id">G2</text>
+  <text x="158" y="222" class="cell-lbl">Submit attempt</text>
+  <g transform="translate(248,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- G3 -->
+  <rect x="272" y="196" width="120" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="272" y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="284" y="210" class="cell-id">G3</text>
+  <text x="284" y="222" class="cell-lbl">Score attempt</text>
+  <g transform="translate(374,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- G4 -->
+  <rect x="398" y="196" width="120" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="398" y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="410" y="210" class="cell-id">G4</text>
+  <text x="410" y="222" class="cell-lbl">Export data</text>
+  <g transform="translate(500,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- G5 -->
+  <rect x="524" y="196" width="120" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="524" y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="536" y="210" class="cell-id">G5</text>
+  <text x="536" y="222" class="cell-lbl">Static dashboard</text>
+  <g transform="translate(626,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- G6 -->
+  <rect x="650" y="196" width="120" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="650" y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="662" y="210" class="cell-id">G6</text>
+  <text x="662" y="222" class="cell-lbl">Cross-cutting rules</text>
+  <g transform="translate(752,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- G7 -->
+  <rect x="776" y="196" width="104" height="38" rx="2" fill="#F5F2EC" stroke="#2D6A4F" stroke-width="1"/>
+  <rect x="776" y="196" width="3"   height="38" fill="#2D6A4F"/>
+  <text x="788" y="210" class="cell-id">G7</text>
+  <text x="788" y="222" class="cell-lbl">Validation report</text>
+  <g transform="translate(862,202)"><rect width="16" height="16" rx="8" fill="#2D6A4F" opacity="0.15"/><path d="M3 8 L6 12 L13 4" class="tick-path" stroke="#2D6A4F"/></g>
+
+  <!-- ══════════════════ SECTION 3: COMPLETION CRITERIA CC1–CC14 ══════════════════ -->
+  <rect x="20" y="246" width="860" height="22" rx="3" fill="#C9622F" opacity="0.8"/>
+  <text x="36" y="261" class="cat-hd">Completion Criteria CC1–CC14 (14 / 14 PASS)</text>
+
+  <!-- CC cells: 14, 2 rows of 7, each ~120w -->
+  <!-- Row A: CC1–CC7 (y=272) -->
+  <!-- CC1 -->
+  <rect x="20"  y="272" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="20"  y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="32"  y="284" class="cell-id">CC1</text>
+  <text x="32"  y="296" class="cell-lbl">Schema valid</text>
+  <g transform="translate(122,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC2 -->
+  <rect x="146" y="272" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="146" y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="158" y="284" class="cell-id">CC2</text>
+  <text x="158" y="296" class="cell-lbl">Submit normalise</text>
+  <g transform="translate(248,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC3 -->
+  <rect x="272" y="272" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="272" y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="284" y="284" class="cell-id">CC3</text>
+  <text x="284" y="296" class="cell-lbl">Scaled score</text>
+  <g transform="translate(374,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC4 -->
+  <rect x="398" y="272" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="398" y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="410" y="284" class="cell-id">CC4</text>
+  <text x="410" y="296" class="cell-lbl">Pass mark 720</text>
+  <g transform="translate(500,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC5 -->
+  <rect x="524" y="272" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="524" y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="536" y="284" class="cell-id">CC5</text>
+  <text x="536" y="296" class="cell-lbl">Domain breakdown</text>
+  <g transform="translate(626,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC6 -->
+  <rect x="650" y="272" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="650" y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="662" y="284" class="cell-id">CC6</text>
+  <text x="662" y="296" class="cell-lbl">Scenario breakdown</text>
+  <g transform="translate(752,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC7 -->
+  <rect x="776" y="272" width="104" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="776" y="272" width="3"   height="32" fill="#C9622F"/>
+  <text x="788" y="284" class="cell-id">CC7</text>
+  <text x="788" y="296" class="cell-lbl">Weak concept tags</text>
+  <g transform="translate(862,278)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- Row B: CC8–CC14 (y=308) -->
+  <!-- CC8 -->
+  <rect x="20"  y="308" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="20"  y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="32"  y="320" class="cell-id">CC8</text>
+  <text x="32"  y="332" class="cell-lbl">Lab progress</text>
+  <g transform="translate(122,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC9 -->
+  <rect x="146" y="308" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="146" y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="158" y="320" class="cell-id">CC9</text>
+  <text x="158" y="332" class="cell-lbl">Score trend</text>
+  <g transform="translate(248,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC10 -->
+  <rect x="272" y="308" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="272" y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="284" y="320" class="cell-id">CC10</text>
+  <text x="284" y="332" class="cell-lbl">No PDF at runtime</text>
+  <g transform="translate(374,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC11 -->
+  <rect x="398" y="308" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="398" y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="410" y="320" class="cell-id">CC11</text>
+  <text x="410" y="332" class="cell-lbl">No network calls</text>
+  <g transform="translate(500,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC12 -->
+  <rect x="524" y="308" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="524" y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="536" y="320" class="cell-id">CC12</text>
+  <text x="536" y="332" class="cell-lbl">Byte-identical regen</text>
+  <g transform="translate(626,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC13 -->
+  <rect x="650" y="308" width="120" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="650" y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="662" y="320" class="cell-id">CC13</text>
+  <text x="662" y="332" class="cell-lbl">Unofficial ≠ official</text>
+  <g transform="translate(752,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- CC14 -->
+  <rect x="776" y="308" width="104" height="32" rx="2" fill="#F5F2EC" stroke="#C9622F" stroke-width="1"/>
+  <rect x="776" y="308" width="3"   height="32" fill="#C9622F"/>
+  <text x="788" y="320" class="cell-id">CC14</text>
+  <text x="788" y="332" class="cell-lbl">Trend direction</text>
+  <g transform="translate(862,314)"><rect width="14" height="14" rx="7" fill="#2D6A4F" opacity="0.15"/><path d="M3 7 L5 11 L11 3" class="tick-path" stroke="#2D6A4F" stroke-width="1.75"/></g>
+
+  <!-- ══════════════════ FOOTER RESULT BAR ══════════════════ -->
+  <rect x="20" y="354" width="860" height="52" rx="3" fill="#1C2B2B"/>
+  <!-- result text -->
+  <text x="50" y="385" font-family="'Georgia','Times New Roman',serif" font-size="18" font-weight="bold" fill="#2D6A4F">MVP PASS</text>
+  <!-- divider -->
+  <line x1="160" y1="362" x2="160" y2="398" stroke="#F5F2EC" stroke-width="0.75" opacity="0.3"/>
+  <!-- stats -->
+  <text x="178" y="376" class="footer-s" fill="#8BA888">pytest suite</text>
+  <text x="178" y="392" font-family="'Courier New','Courier',monospace" font-size="13" font-weight="bold" fill="#F5F2EC">130 passing · 1 skip</text>
+  <line x1="380" y1="362" x2="380" y2="398" stroke="#F5F2EC" stroke-width="0.75" opacity="0.3"/>
+  <text x="398" y="376" class="footer-s" fill="#8BA888">seed attempt</text>
+  <text x="398" y="392" font-family="'Courier New','Courier',monospace" font-size="13" font-weight="bold" fill="#C9622F">8 / 10 → 820 PASS · +100</text>
+  <line x1="620" y1="362" x2="620" y2="398" stroke="#F5F2EC" stroke-width="0.75" opacity="0.3"/>
+  <text x="638" y="376" class="footer-s" fill="#8BA888">completed</text>
+  <text x="638" y="392" font-family="'Courier New','Courier',monospace" font-size="13" font-weight="bold" fill="#F5F2EC">2026-05-13</text>
+  <line x1="790" y1="362" x2="790" y2="398" stroke="#F5F2EC" stroke-width="0.75" opacity="0.3"/>
+  <text x="808" y="376" class="footer-s" fill="#8BA888">commit</text>
+  <text x="808" y="392" font-family="'Courier New','Courier',monospace" font-size="11" fill="#8BA888">418c1f1</text>
+</svg>

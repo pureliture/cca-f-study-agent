@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" role="img" aria-labelledby="pipeline-title pipeline-desc">
+  <title id="pipeline-title">CCA-F Study Runtime Pipeline</title>
+  <desc id="pipeline-desc">Five-stage runtime pipeline: Author/Validate → Submit → Score → Export → Render. Each stage shows the CLI command that drives it and the artifact it produces. Annotations confirm no PDF parsing, no network calls, and byte-identical dashboard regeneration.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#C9622F"/>
+    </marker>
+    <style>
+      .stage-box   { fill:#F5F2EC; stroke:#1C2B2B; stroke-width:1.5; rx:3; }
+      .stage-title { font-family:'Georgia','Times New Roman',serif; font-size:13px; font-weight:bold; fill:#1C2B2B; }
+      .stage-cmd   { font-family:'Courier New','Courier',monospace; font-size:9.5px; fill:#2D6A4F; }
+      .stage-prod  { font-family:'Georgia','Times New Roman',serif; font-size:10px; fill:#555; font-style:italic; }
+      .annot       { font-family:'Courier New','Courier',monospace; font-size:8.5px; fill:#C9622F; }
+      .annot-line  { stroke:#C9622F; stroke-width:0.75; stroke-dasharray:3,3; }
+      .bg-rule     { stroke:#1C2B2B; stroke-width:0.5; opacity:0.18; }
+      .label-num   { font-family:'Georgia','Times New Roman',serif; font-size:10px; fill:#8BA888; font-weight:bold; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="320" fill="#F5F2EC"/>
+
+  <!-- Left accent rule -->
+  <rect x="0" y="0" width="4" height="320" fill="#C9622F"/>
+
+  <!-- Header band -->
+  <rect x="4" y="0" width="896" height="40" fill="#1C2B2B"/>
+  <text x="20" y="25" font-family="'Georgia','Times New Roman',serif" font-size="14" font-weight="bold" fill="#F5F2EC">CCA-F Study Runtime · Pipeline</text>
+  <text x="780" y="25" font-family="'Courier New','Courier',monospace" font-size="10" fill="#8BA888">5 stages · local only</text>
+
+  <!-- Horizontal spine line -->
+  <line x1="50" y1="160" x2="850" y2="160" class="bg-rule"/>
+
+  <!-- ══════════════════ STAGE 1: Author / Validate ══════════════════ -->
+  <rect x="20" y="55" width="148" height="140" rx="3" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+  <rect x="20" y="55" width="148" height="28" rx="3" fill="#2D6A4F"/>
+  <rect x="20" y="69" width="148" height="14" fill="#2D6A4F"/><!-- flatten bottom corners -->
+  <text x="94" y="74" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="12" font-weight="bold" fill="#F5F2EC">① Author / Validate</text>
+  <text x="94" y="100" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#2D6A4F">validate_questions</text>
+  <line x1="28" y1="108" x2="160" y2="108" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="94" y="122" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">Checks JSONL</text>
+  <text x="94" y="136" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">against schema</text>
+  <line x1="28" y1="148" x2="160" y2="148" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="94" y="163" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#8BA888">→ validated JSONL</text>
+  <text x="94" y="178" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#C9622F">No PDF parsing</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="170" y1="125" x2="196" y2="125" stroke="#C9622F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ══════════════════ STAGE 2: Submit ══════════════════ -->
+  <rect x="198" y="55" width="148" height="140" rx="3" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+  <rect x="198" y="55" width="148" height="28" rx="3" fill="#2D6A4F"/>
+  <rect x="198" y="69" width="148" height="14" fill="#2D6A4F"/>
+  <text x="272" y="74" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="12" font-weight="bold" fill="#F5F2EC">② Submit</text>
+  <text x="272" y="100" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#2D6A4F">submit_attempt.py</text>
+  <line x1="206" y1="108" x2="338" y2="108" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="272" y="122" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">Joins learner answers</text>
+  <text x="272" y="136" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">with question bank</text>
+  <line x1="206" y1="148" x2="338" y2="148" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="272" y="163" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#8BA888">→ attempt JSON</text>
+  <text x="272" y="178" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#C9622F">No network</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="348" y1="125" x2="374" y2="125" stroke="#C9622F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ══════════════════ STAGE 3: Score ══════════════════ -->
+  <rect x="376" y="55" width="148" height="140" rx="3" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+  <rect x="376" y="55" width="148" height="28" rx="3" fill="#C9622F"/>
+  <rect x="376" y="69" width="148" height="14" fill="#C9622F"/>
+  <text x="450" y="74" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="12" font-weight="bold" fill="#F5F2EC">③ Score</text>
+  <text x="450" y="100" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#C9622F">score_attempt.py</text>
+  <line x1="384" y1="108" x2="516" y2="108" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="450" y="122" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">Scaled score vs</text>
+  <text x="450" y="136" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">pass mark 720</text>
+  <line x1="384" y1="148" x2="516" y2="148" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="450" y="163" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#8BA888">→ scored attempt</text>
+  <text x="450" y="178" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#2D6A4F">100–1000 scale</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="526" y1="125" x2="552" y2="125" stroke="#C9622F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ══════════════════ STAGE 4: Export ══════════════════ -->
+  <rect x="554" y="55" width="148" height="140" rx="3" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+  <rect x="554" y="55" width="148" height="28" rx="3" fill="#2D6A4F"/>
+  <rect x="554" y="69" width="148" height="14" fill="#2D6A4F"/>
+  <text x="628" y="74" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="12" font-weight="bold" fill="#F5F2EC">④ Export</text>
+  <text x="628" y="100" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#2D6A4F">export_dashboard_data.py</text>
+  <line x1="562" y1="108" x2="694" y2="108" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="628" y="122" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">Aggregates attempts</text>
+  <text x="628" y="136" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">+ labs → JSON</text>
+  <line x1="562" y1="148" x2="694" y2="148" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="628" y="163" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#8BA888">→ dashboard-data.json</text>
+  <text x="628" y="178" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#C9622F">Byte-identical regen</text>
+
+  <!-- Arrow 4→5 -->
+  <line x1="704" y1="125" x2="730" y2="125" stroke="#C9622F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ══════════════════ STAGE 5: Render ══════════════════ -->
+  <rect x="732" y="55" width="148" height="140" rx="3" fill="#F5F2EC" stroke="#1C2B2B" stroke-width="1.5"/>
+  <rect x="732" y="55" width="148" height="28" rx="3" fill="#1C2B2B"/>
+  <rect x="732" y="69" width="148" height="14" fill="#1C2B2B"/>
+  <text x="806" y="74" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="12" font-weight="bold" fill="#F5F2EC">⑤ Render</text>
+  <text x="806" y="100" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#1C2B2B">python -m http.server</text>
+  <line x1="740" y1="108" x2="872" y2="108" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="806" y="122" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">Static dashboard</text>
+  <text x="806" y="136" text-anchor="middle" font-family="'Georgia','Times New Roman',serif" font-size="10" fill="#555" font-style="italic">fetches JSON → 7 widgets</text>
+  <line x1="740" y1="148" x2="872" y2="148" stroke="#1C2B2B" stroke-width="0.5" opacity="0.25"/>
+  <text x="806" y="163" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8.5" fill="#8BA888">→ HTML dashboard</text>
+  <text x="806" y="178" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="8" fill="#2D6A4F">Vanilla JS · no build</text>
+
+  <!-- ══════════════════ Annotation band ══════════════════ -->
+  <rect x="20" y="213" width="860" height="90" rx="3" fill="none" stroke="#1C2B2B" stroke-width="0.75" opacity="0.3"/>
+  <text x="36" y="232" font-family="'Georgia','Times New Roman',serif" font-size="10" font-weight="bold" fill="#1C2B2B">Runtime guarantees</text>
+  <line x1="36" y1="237" x2="200" y2="237" stroke="#1C2B2B" stroke-width="0.5" opacity="0.35"/>
+
+  <!-- Guarantee pills -->
+  <rect x="36"  y="244" width="120" height="20" rx="3" fill="#2D6A4F" opacity="0.12" stroke="#2D6A4F" stroke-width="1"/>
+  <text x="96"  y="258" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="9" fill="#2D6A4F">No PDF parsing</text>
+
+  <rect x="168" y="244" width="100" height="20" rx="3" fill="#2D6A4F" opacity="0.12" stroke="#2D6A4F" stroke-width="1"/>
+  <text x="218" y="258" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="9" fill="#2D6A4F">No network</text>
+
+  <rect x="280" y="244" width="110" height="20" rx="3" fill="#2D6A4F" opacity="0.12" stroke="#2D6A4F" stroke-width="1"/>
+  <text x="335" y="258" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="9" fill="#2D6A4F">No API keys</text>
+
+  <rect x="402" y="244" width="140" height="20" rx="3" fill="#C9622F" opacity="0.12" stroke="#C9622F" stroke-width="1"/>
+  <text x="472" y="258" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="9" fill="#C9622F">Byte-identical regen</text>
+
+  <rect x="554" y="244" width="145" height="20" rx="3" fill="#C9622F" opacity="0.12" stroke="#C9622F" stroke-width="1"/>
+  <text x="626" y="258" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="9" fill="#C9622F">Unofficial ≠ official</text>
+
+  <rect x="711" y="244" width="150" height="20" rx="3" fill="#1C2B2B" opacity="0.08" stroke="#1C2B2B" stroke-width="1"/>
+  <text x="786" y="258" text-anchor="middle" font-family="'Courier New','Courier',monospace" font-size="9" fill="#1C2B2B">Seed: 8/10 → 820 PASS</text>
+
+  <!-- Sample score line -->
+  <text x="36" y="292" font-family="'Georgia','Times New Roman',serif" font-size="9.5" fill="#555" font-style="italic">Seed sample attempt: 8 correct / 10 questions → scaled score 820 → PASS (pass mark 720, gap +100)</text>
+</svg>
